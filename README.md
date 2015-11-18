@@ -1,7 +1,7 @@
 # Aviato-android
 
 **IMPORTANT NOTE**
-  * Do NOT working from the Master branch. If you are starting a new branch, checkout the master, then create your own branch off of master
+  * Do NOT work from the Master branch. If you are starting a new branch, checkout the master, then create your own branch off of master
 
 Steps!
 
