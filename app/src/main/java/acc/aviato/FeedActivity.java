@@ -1,5 +1,6 @@
 package acc.aviato;
 
+import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -44,9 +45,11 @@ public class FeedActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-       /* if (id == R.id.action_settings) {
+       if (id == R.id.action_settings) {
+           Intent intent = new Intent(FeedActivity.this, SettingsActivity.class);
+           startActivity(intent);
             return true;
-        }*/
+        }
 
         return super.onOptionsItemSelected(item);
     }
