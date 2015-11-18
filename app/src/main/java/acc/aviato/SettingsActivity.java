@@ -11,6 +11,7 @@ import com.parse.ParseUser;
 public class SettingsActivity extends AppCompatActivity {
 
     Button mLogOut;
+    ParseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,11 +19,17 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         mLogOut = (Button)findViewById(R.id.logOutButton);
+        user = ParseUser.getCurrentUser();
+        if(user==null) {
+            mLogOut.setText("Sign in");
+        }
 
         mLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseUser.logOut();
+                if(user==null) {
+                    ParseUser.logOut();
+                }
                 Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

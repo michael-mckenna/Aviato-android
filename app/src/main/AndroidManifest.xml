@@ -36,8 +36,7 @@
         </activity>
         <activity android:name=".FriendsActivity" >
         </activity>
-        <activity android:name=".SettingsActivity"
-            android:parentActivityName=".FeedActivity">
+        <activity android:name=".SettingsActivity">
         </activity>
         <activity android:name=".GroupsActivity" >
         </activity>
