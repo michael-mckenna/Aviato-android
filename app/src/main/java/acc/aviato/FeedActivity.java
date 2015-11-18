@@ -1,5 +1,6 @@
 package acc.aviato;
 
+
 import android.app.Fragment;
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -46,9 +47,11 @@ public class FeedActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-       /* if (id == R.id.action_settings) {
+       if (id == R.id.action_settings) {
+           Intent intent = new Intent(FeedActivity.this, SettingsActivity.class);
+           startActivity(intent);
             return true;
-        }*/
+        }
 
         return super.onOptionsItemSelected(item);
     }
