@@ -1,5 +1,8 @@
 package acc.aviato;
 
+import android.app.Fragment;
+import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -7,8 +10,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 
 public class FeedActivity extends AppCompatActivity {
 
@@ -17,22 +25,16 @@ public class FeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        if(savedInstanceState == null) {
+            getFragmentManager().beginTransaction()
+                    .add(R.id.container, FeedActivityFragment.newInstance(getIntent().getExtras())).commit();
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.title_items, menu);
         return true;
     }
 
@@ -51,28 +53,68 @@ public class FeedActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
 
-        if (id == R.id.nav_camara) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+    public static class FeedActivityFragment extends Fragment {
 
-        } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
+        public FeedActivityFragment() {setHasOptionsMenu(true); }
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        public static FeedActivityFragment newInstance(Bundle bundle) {
+            FeedActivityFragment fragment = new FeedActivityFragment();
+            fragment.setArguments(bundle);
+            return fragment;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
+        @Nullable
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+            View rootView = inflater.inflate(R.layout.fragment_feed_activity, container, false);
+            Button groups = (Button)rootView.findViewById(R.id.groups);
+            groups.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), GroupsActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            Button events = (Button)rootView.findViewById(R.id.events);
+
+            Button friends = (Button)rootView.findViewById(R.id.friends);
+            friends.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), FriendsActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+
+            return rootView;
+        }
+
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+        }
+
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            menu.clear();
+            inflater.inflate(R.menu.title_items, menu);
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            int id = item.getItemId();
+            if(id == R.id.add_event) {
+                //go to CreateNewEventActivity
+            }
+
+            return super.onOptionsItemSelected(item);
+        }
+
+
+    }
 }
