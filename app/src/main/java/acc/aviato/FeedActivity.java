@@ -18,6 +18,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
+
+import com.melnykov.fab.FloatingActionButton;
 
 public class FeedActivity extends AppCompatActivity {
 
@@ -93,6 +96,9 @@ public class FeedActivity extends AppCompatActivity {
                 }
             });
 
+            ListView listView = (ListView) rootView.findViewById(R.id.listView4);
+            FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_feed);
+            fab.attachToListView(listView);
 
             return rootView;
         }

@@ -12,6 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
+
+import com.melnykov.fab.FloatingActionButton;
 
 public class FriendsActivity extends AppCompatActivity {
 
@@ -87,6 +90,10 @@ public class FriendsActivity extends AppCompatActivity {
                 }
             });
             Button friends = (Button)rootView.findViewById(R.id.friends);
+
+            ListView listView = (ListView) rootView.findViewById(R.id.listView);
+            FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_friends);
+            fab.attachToListView(listView);
 
             return rootView;
         }
