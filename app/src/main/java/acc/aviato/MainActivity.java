@@ -16,6 +16,7 @@ import android.view.MenuItem;
 
 import com.parse.Parse;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -35,9 +36,16 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        if(ParseUser.getCurrentUser()==null){
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
+        else{
+            Intent intent = new Intent(MainActivity.this, FeedActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
     }
 
     @Override
