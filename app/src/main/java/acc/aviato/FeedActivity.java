@@ -18,6 +18,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
+
+import com.melnykov.fab.FloatingActionButton;
 
 public class FeedActivity extends AppCompatActivity {
 
@@ -48,8 +51,8 @@ public class FeedActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
        if (id == R.id.action_settings) {
-           Intent intent = new Intent(FeedActivity.this, SettingsActivity.class);
-           startActivity(intent);
+            Intent intent = new Intent(FeedActivity.this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -93,6 +96,9 @@ public class FeedActivity extends AppCompatActivity {
                 }
             });
 
+            ListView listView = (ListView) rootView.findViewById(R.id.listView4);
+            FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_feed);
+            fab.attachToListView(listView);
 
             return rootView;
         }
