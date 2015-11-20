@@ -8,4 +8,7 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="logout">Log Out</string>
     <string name="login">Sign In</string>
+    <string name="title_section1">Groups</string>
+    <string name="title_section2">Events</string>
+    <string name="title_section3">Friends</string>
 </resources>
