@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         mSkip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, FeedActivity.class);
+                Intent intent = new Intent(LoginActivity.this, FragmentedActivity.class);
                 startActivity(intent);
             }
         });
@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             if (e == null) {
                                 // Success!
-                                Intent intent = new Intent(LoginActivity.this, FeedActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, FragmentedActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
