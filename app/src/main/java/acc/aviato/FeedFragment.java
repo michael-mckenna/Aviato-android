@@ -31,7 +31,13 @@ public class FeedFragment extends ListFragment {
         View rootView = inflater.inflate(R.layout.fragment_feed_activity, container, false);
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_feed);
-
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+                startActivity(intent);
+            }
+        });
         return rootView;
     }
 
