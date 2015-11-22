@@ -60,10 +60,10 @@ public class SignUpActivity extends AppCompatActivity {
 
                             if (e == null) {
                                 // Success!
-                                Intent intent = new Intent(SignUpActivity.this, SignUpActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                                // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
+                                SignUpActivity.this.finish();
                             } else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
                                 builder.setMessage(e.getMessage())
