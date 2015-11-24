@@ -22,16 +22,16 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mLogOut = (Button)findViewById(R.id.logOutButton);
+        mLogOut = (Button) findViewById(R.id.logOutButton);
         user = ParseUser.getCurrentUser();
-        if(user==null) {
+        if (user == null) {
             mLogOut.setText(R.string.login);
         }
 
         mLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(user!=null) {
+                if (user != null) {
                     ParseUser.logOutInBackground(new LogOutCallback() {
                         @Override
                         public void done(ParseException e) {
@@ -49,8 +49,9 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch(id){
-            case android.R.id.home: setResult(RESULT_CANCELED);
+        switch (id) {
+            case android.R.id.home:
+                setResult(RESULT_CANCELED);
                 finish();
                 return true;
         }
