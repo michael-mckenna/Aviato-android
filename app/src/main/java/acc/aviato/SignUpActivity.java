@@ -2,9 +2,11 @@ package acc.aviato;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -27,7 +29,11 @@ public class SignUpActivity extends AppCompatActivity {
         //getActionBar().setDisplayHomeAsUpEnabled(true);
 
         mUsername = (EditText) findViewById(R.id.usernameField);
+        mUsername.setTypeface(Typeface.DEFAULT);
+        mUsername.setTransformationMethod(new PasswordTransformationMethod());
         mPassword = (EditText) findViewById(R.id.passwordField);
+        mPassword.setTypeface(Typeface.DEFAULT);
+        mPassword.setTransformationMethod(new PasswordTransformationMethod());
         mSignUp = (Button) findViewById(R.id.signUpButton);
 
         mSignUp.setOnClickListener(new View.OnClickListener() {

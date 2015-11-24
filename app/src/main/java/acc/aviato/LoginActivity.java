@@ -3,9 +3,11 @@ package acc.aviato;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -45,7 +47,11 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         mUsername = (EditText) findViewById(R.id.usernameField);
+        mUsername.setTypeface(Typeface.DEFAULT);
+        mUsername.setTransformationMethod(new PasswordTransformationMethod());
         mPassword = (EditText) findViewById(R.id.passwordField);
+        mPassword.setTypeface(Typeface.DEFAULT);
+        mPassword.setTransformationMethod(new PasswordTransformationMethod());
         mSkip = (Button) findViewById(R.id.skipButton);
         mSkip.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +92,6 @@ public class LoginActivity extends AppCompatActivity {
                                 // Success!
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                                 LoginActivity.this.finish();
                             } else {

@@ -20,7 +20,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="122dp"
         android:ems="10"
-        android:hint="Enter username"
+        android:hint="Username"
         android:inputType="textVisiblePassword|textNoSuggestions" />
 
     <EditText
@@ -30,7 +30,7 @@
         android:layout_below="@+id/usernameField"
         android:layout_centerHorizontal="true"
         android:ems="10"
-        android:hint="Enter password"
+        android:hint="Password"
         android:inputType="textPassword" />
 
     <Button
@@ -72,7 +72,7 @@
         android:background="@android:color/transparent"
         android:text="Skip for now"
         android:textAllCaps="false"
-        android:textColor="#1fdcfe"
+        android:textColor="@android:color/darker_gray"
         android:textSize="15sp"
         android:typeface="sans" />
 </RelativeLayout>
