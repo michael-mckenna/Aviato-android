@@ -10,21 +10,21 @@
     tools:context="acc.aviato.SignUpActivity">
 
     <EditText
-        android:id="@+id/phoneNumberField"
+        android:id="@+id/usernameField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="122dp"
         android:ems="10"
-        android:hint="Enter cell # 9797905555"
-        android:inputType="phone" />
+        android:hint="Enter username"
+        android:inputType="textVisiblePassword|textNoSuggestions" />
 
     <EditText
         android:id="@+id/passwordField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/phoneNumberField"
+        android:layout_below="@+id/usernameField"
         android:layout_centerHorizontal="true"
         android:ems="10"
         android:hint="Enter password"
@@ -39,8 +39,8 @@
         android:layout_alignRight="@+id/passwordField"
         android:layout_alignStart="@+id/passwordField"
         android:layout_below="@+id/passwordField"
-        android:layout_marginTop="40dp"
-        android:background="@android:color/holo_blue_light"
+        android:layout_marginTop="30dp"
+        android:background="@android:color/holo_blue_bright"
         android:text="Sign Up"
         android:textColor="#ffffffff"
         android:textSize="20sp" />

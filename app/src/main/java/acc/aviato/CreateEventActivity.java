@@ -72,7 +72,9 @@ public class CreateEventActivity extends AppCompatActivity {
         private Button galleryBtn;
         private Button photoBtn;
 
-        public CreateEventFragment() {setHasOptionsMenu(true);}
+        public CreateEventFragment() {
+            setHasOptionsMenu(true);
+        }
 
         public static CreateEventFragment newInstance(Bundle bundle) {
             CreateEventFragment fragment = new CreateEventFragment();
@@ -83,11 +85,11 @@ public class CreateEventActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View eventView = inflater.inflate(R.layout.fragment_create_event, container, false);
 
-            eventInput = (EditText)eventView.findViewById(R.id.eventInput);
-            tagsInput = (EditText)eventView.findViewById(R.id.tagsInput);
+            eventInput = (EditText) eventView.findViewById(R.id.eventInput);
+            tagsInput = (EditText) eventView.findViewById(R.id.tagsInput);
 
-            galleryBtn = (Button)eventView.findViewById(R.id.galleryBtn);
-            photoBtn = (Button)eventView.findViewById(R.id.photoBtn);
+            galleryBtn = (Button) eventView.findViewById(R.id.galleryBtn);
+            photoBtn = (Button) eventView.findViewById(R.id.photoBtn);
 
             FloatingActionButton fab = (FloatingActionButton) eventView.findViewById(R.id.fab_feed);
             fab.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +101,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
                     event = event.trim();
                     tag = tag.trim();
-                    if(event.isEmpty() || tag.isEmpty()) {
+                    if (event.isEmpty() || tag.isEmpty()) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                         builder.setMessage("You must at least include a name and a tag!")
                                 .setTitle("Error")

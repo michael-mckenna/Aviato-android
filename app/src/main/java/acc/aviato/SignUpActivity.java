@@ -16,7 +16,7 @@ import com.parse.SignUpCallback;
 
 public class SignUpActivity extends AppCompatActivity {
 
-    EditText mPhoneNumber;
+    EditText mUsername;
     EditText mPassword;
     Button mSignUp;
 
@@ -26,14 +26,14 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
         //getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mPhoneNumber = (EditText) findViewById(R.id.phoneNumberField);
+        mUsername = (EditText) findViewById(R.id.usernameField);
         mPassword = (EditText) findViewById(R.id.passwordField);
         mSignUp = (Button) findViewById(R.id.signUpButton);
 
         mSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = mPhoneNumber.getText().toString();
+                String username = mUsername.getText().toString();
                 String password = mPassword.getText().toString();
 
                 username = username.trim();
