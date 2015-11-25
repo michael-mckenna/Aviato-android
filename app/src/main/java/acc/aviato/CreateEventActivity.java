@@ -10,11 +10,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.melnykov.fab.FloatingActionButton;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -55,7 +53,6 @@ public class CreateEventActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         EditText eventInput;
         EditText tagsInput;
-        ViewGroup container;
 
         switch (item.getItemId()) {
             case R.id.submit_event:
@@ -70,17 +67,21 @@ public class CreateEventActivity extends AppCompatActivity {
 
                 event = event.trim();
                 tag = tag.trim();
-                // TODO: Task#35 - Disallow an event to be created if a user is not signed in
-                // Example: if (ParseUser.getCurrentUser() == null) { A user is not signed in! }
-                if (event.isEmpty() || tag.isEmpty()) {
+                if (ParseUser.getCurrentUser() == null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("You must at least include a name and a tag!")
+                    builder.setMessage("You must be signed in to create an event.")
                             .setTitle("Error")
                             .setPositiveButton(android.R.string.ok, null);
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                } else if (event.isEmpty() || tag.isEmpty()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("You must include a name and a tag.")
+                            .setTitle("Error")
+                            .setPositiveButton(android.R.string.ok, null);
+                    AlertDialog alert = builder.create();
+                    alert.show();
                 } else {
-                    System.out.println(event);
                     ParseObject eventObject = new ParseObject(ParseConstants.CLASS_EVENTS);
                     eventObject.put(ParseConstants.KEY_SENDER_ID, ParseUser.getCurrentUser().getObjectId());
                     eventObject.put(ParseConstants.KEY_SENDER_NAME, ParseUser.getCurrentUser().getUsername());
@@ -113,9 +114,8 @@ public class CreateEventActivity extends AppCompatActivity {
         }
     }
 
+    // TODO: Resolve question from Liam - does this fragment even need to exist?
     public static class CreateEventFragment extends Fragment {
-
-        // static final int PICK_IMAGE_REQUEST = 1;
 
         public CreateEventFragment() {
             setHasOptionsMenu(true);

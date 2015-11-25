@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.PasswordTransformationMethod;
+import android.text.method.SingleLineTransformationMethod;
+import android.text.method.TransformationMethod;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -48,7 +50,8 @@ public class LoginActivity extends AppCompatActivity {
 
         mUsername = (EditText) findViewById(R.id.usernameField);
         mUsername.setTypeface(Typeface.DEFAULT);
-        mUsername.setTransformationMethod(new PasswordTransformationMethod());
+        mUsername.setTransformationMethod(new SingleLineTransformationMethod() {
+        });
         mPassword = (EditText) findViewById(R.id.passwordField);
         mPassword.setTypeface(Typeface.DEFAULT);
         mPassword.setTransformationMethod(new PasswordTransformationMethod());

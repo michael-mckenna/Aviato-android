@@ -7,6 +7,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
+import android.text.method.SingleLineTransformationMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -25,12 +26,12 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
+    setContentView(R.layout.activity_sign_up);
         //getActionBar().setDisplayHomeAsUpEnabled(true);
 
         mUsername = (EditText) findViewById(R.id.usernameField);
         mUsername.setTypeface(Typeface.DEFAULT);
-        mUsername.setTransformationMethod(new PasswordTransformationMethod());
+        mUsername.setTransformationMethod(new SingleLineTransformationMethod());
         mPassword = (EditText) findViewById(R.id.passwordField);
         mPassword.setTypeface(Typeface.DEFAULT);
         mPassword.setTransformationMethod(new PasswordTransformationMethod());
@@ -47,7 +48,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                 if (username.isEmpty() || password.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
-                    builder.setMessage("Please fill out all of the fields")
+                    builder.setMessage("Please complete all required fields.")
                             .setTitle("Empty Fields")
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog dialog = builder.create();
@@ -72,7 +73,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 SignUpActivity.this.finish();
                             } else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
-                                builder.setMessage(e.getMessage())
+                                builder.setMessage("Error: " + e.getMessage() + ".")
                                         .setTitle("Sign up error")
                                         .setPositiveButton(android.R.string.ok, null);
                                 AlertDialog dialog = builder.create();
