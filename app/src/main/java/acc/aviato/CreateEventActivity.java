@@ -24,6 +24,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
@@ -37,7 +38,7 @@ public class CreateEventActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.menu_createactivity, menu);
         return true;
     }
 
@@ -52,25 +53,69 @@ public class CreateEventActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            onBackPressed();
+        EditText eventInput;
+        EditText tagsInput;
+        ViewGroup container;
+
+        switch (item.getItemId()) {
+            case R.id.submit_event:
+                // TODO: Have a way of handling a null return from getApplicationContext
+
+                eventInput = (EditText) findViewById(R.id.eventInput);
+                tagsInput = (EditText) findViewById(R.id.tagsInput);
+
+                String event = eventInput.getText().toString().trim();
+                String tag = tagsInput.getText().toString().trim();
+                int vote = 0;
+
+                event = event.trim();
+                tag = tag.trim();
+                // TODO: Task#35 - Disallow an event to be created if a user is not signed in
+                // Example: if (ParseUser.getCurrentUser() == null) { A user is not signed in! }
+                if (event.isEmpty() || tag.isEmpty()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("You must at least include a name and a tag!")
+                            .setTitle("Error")
+                            .setPositiveButton(android.R.string.ok, null);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    System.out.println(event);
+                    ParseObject eventObject = new ParseObject(ParseConstants.CLASS_EVENTS);
+                    eventObject.put(ParseConstants.KEY_SENDER_ID, ParseUser.getCurrentUser().getObjectId());
+                    eventObject.put(ParseConstants.KEY_SENDER_NAME, ParseUser.getCurrentUser().getUsername());
+                    eventObject.put(ParseConstants.KEY_EVENT_NAME, event);
+                    eventObject.put(ParseConstants.KEY_EVENT_TAG, tag);
+                    eventObject.put(ParseConstants.KEY_EVENT_VOTES, vote);
+                    eventObject.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                Toast.makeText(CreateEventActivity.this, "Event Uploaded", Toast.LENGTH_SHORT).show();
+                                CreateEventActivity.this.finish();
+                            } else {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(CreateEventActivity.this);
+                                builder.setMessage(e.getMessage() + "")
+                                        .setTitle("Error")
+                                        .setPositiveButton(android.R.string.ok, null);
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
+                            }
+                        }
+                    });
+
+                }
+                return true;
+            case R.id.upload_photo:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     public static class CreateEventFragment extends Fragment {
 
-        static final int PICK_IMAGE_REQUEST = 1;
-
-        // UI
-        private EditText eventInput;
-        private EditText tagsInput;
-        private Button galleryBtn;
-        private Button photoBtn;
+        // static final int PICK_IMAGE_REQUEST = 1;
 
         public CreateEventFragment() {
             setHasOptionsMenu(true);
@@ -84,58 +129,6 @@ public class CreateEventActivity extends AppCompatActivity {
 
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View eventView = inflater.inflate(R.layout.fragment_create_event, container, false);
-
-            eventInput = (EditText) eventView.findViewById(R.id.eventInput);
-            tagsInput = (EditText) eventView.findViewById(R.id.tagsInput);
-
-            galleryBtn = (Button) eventView.findViewById(R.id.galleryBtn);
-            photoBtn = (Button) eventView.findViewById(R.id.photoBtn);
-
-            FloatingActionButton fab = (FloatingActionButton) eventView.findViewById(R.id.fab_feed);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String event = eventInput.getText().toString().trim();
-                    String tag = tagsInput.getText().toString().trim();
-                    int vote = 0;
-
-                    event = event.trim();
-                    tag = tag.trim();
-                    if (event.isEmpty() || tag.isEmpty()) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setMessage("You must at least include a name and a tag!")
-                                .setTitle("Error")
-                                .setPositiveButton(android.R.string.ok, null);
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                    } else {
-                        ParseObject eventObject = new ParseObject(ParseConstants.CLASS_EVENTS);
-                        eventObject.put(ParseConstants.KEY_SENDER_ID, ParseUser.getCurrentUser().getObjectId());
-                        eventObject.put(ParseConstants.KEY_SENDER_NAME, ParseUser.getCurrentUser().getUsername());
-                        eventObject.put(ParseConstants.KEY_EVENT_NAME, event);
-                        eventObject.put(ParseConstants.KEY_EVENT_TAG, tag);
-                        eventObject.put(ParseConstants.KEY_EVENT_VOTES, vote);
-                        eventObject.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e == null) {
-                                    Toast.makeText(getActivity(), "Event Uploaded", Toast.LENGTH_SHORT).show();
-                                    getActivity().finish();
-                                } else {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                    builder.setMessage(e.getMessage() + "")
-                                            .setTitle("Error")
-                                            .setPositiveButton(android.R.string.ok, null);
-                                    AlertDialog dialog = builder.create();
-                                    dialog.show();
-                                }
-                            }
-                        });
-
-                    }
-                }
-            });
-
             return eventView;
         }
 
@@ -147,7 +140,7 @@ public class CreateEventActivity extends AppCompatActivity {
         @Override
         public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
             menu.clear();
-            inflater.inflate(R.menu.main, menu);
+            inflater.inflate(R.menu.menu_createactivity, menu);
         }
 
     }
