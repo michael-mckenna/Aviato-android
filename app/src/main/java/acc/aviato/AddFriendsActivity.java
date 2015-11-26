@@ -49,6 +49,7 @@ public class AddFriendsActivity extends AppCompatActivity {
                 query.whereEqualTo(ParseConstants.KEY_USERNAME, requested_username);
                 query.setLimit(1);
                 Log.i(TAG, "Searching for user: " + requested_username);
+                /*FIXME: put a loader in here*/
                 query.findInBackground(new FindCallback<ParseUser>() {
                     @Override
                     public void done(List<ParseUser> list, ParseException e) {
