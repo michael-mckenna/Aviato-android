@@ -14,4 +14,6 @@
     <string name="title_activity_add_friends">AddFriendsActivity</string>
     <string name="text_hint_username">Username</string>
     <string name="button_label_add_friend">Add Friend</string>
+    <string name="notLoggedInEventMessage">You must login before creating an event!</string>
+    <string name="notLoggedInEventTitle">Error</string>
 </resources>
