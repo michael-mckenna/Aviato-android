@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +16,8 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.melnykov.fab.FloatingActionButton;
+import com.parse.Parse;
+import com.parse.ParseUser;
 
 public class FeedFragment extends ListFragment {
 
@@ -34,8 +37,17 @@ public class FeedFragment extends ListFragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CreateEventActivity.class);
-                startActivity(intent);
+                if (ParseUser.getCurrentUser() != null) {
+                    Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+                    startActivity(intent);
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+                            .setMessage(R.string.notLoggedInEventMessage)
+                            .setTitle(R.string.notLoggedInEventTitle)
+                            .setPositiveButton(android.R.string.ok, null);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
             }
         });
         return rootView;
