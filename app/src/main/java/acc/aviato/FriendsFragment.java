@@ -27,7 +27,7 @@ import java.util.List;
 
 public class FriendsFragment extends ListFragment {
 
-    public static final String TAG  = FriendsFragment.class.getSimpleName();
+    public static final String TAG = FriendsFragment.class.getSimpleName();
 
     protected List<ParseUser> mUsers;
     protected ParseRelation<ParseUser> friendsRelation;
@@ -80,45 +80,48 @@ public class FriendsFragment extends ListFragment {
     public void onResume() {
         super.onResume();
 
-        getListView().setChoiceMode(ListView.CHOICE_MODE_NONE);
-        currentUser = ParseUser.getCurrentUser();
-        friendsRelation = currentUser.getRelation(ParseConstants.KEY_FRIENDS_RELATION);
 
-        ParseQuery<ParseUser> query = friendsRelation.getQuery();
-        query.orderByAscending(ParseConstants.KEY_USERNAME);
-        query.setLimit(1000);
+        if (ParseUser.getCurrentUser() != null) {
+            getListView().setChoiceMode(ListView.CHOICE_MODE_NONE);
+            currentUser = ParseUser.getCurrentUser();
+            friendsRelation = currentUser.getRelation(ParseConstants.KEY_FRIENDS_RELATION);
+
+            ParseQuery<ParseUser> query = friendsRelation.getQuery();
+            query.orderByAscending(ParseConstants.KEY_USERNAME);
+            query.setLimit(1000);
         /*FIXME: add a loader for this*/
-        query.findInBackground(new FindCallback<ParseUser>() {
-            @Override
-            public void done(List<ParseUser> users, ParseException e) {
-                if (e == null) {
+            query.findInBackground(new FindCallback<ParseUser>() {
+                @Override
+                public void done(List<ParseUser> users, ParseException e) {
+                    if (e == null) {
                     /* success */
-                    mUsers = users;
-                    String[] usernames = new String[mUsers.size()];
-                    int i = 0;
-                    for (ParseUser user : mUsers) {
-                        usernames[i] = user.getUsername();
-                        i++;
-                    }
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                            getContext(), android.R.layout.simple_list_item_1,
-                            usernames);
-                    setListAdapter(adapter);
+                        mUsers = users;
+                        String[] usernames = new String[mUsers.size()];
+                        int i = 0;
+                        for (ParseUser user : mUsers) {
+                            usernames[i] = user.getUsername();
+                            i++;
+                        }
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                                getContext(), android.R.layout.simple_list_item_1,
+                                usernames);
+                        setListAdapter(adapter);
 
-                } else {
+                    } else {
                     /* error */
-                    Log.e(TAG, e.getMessage());
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setMessage(e.getMessage())
-                            .setTitle("error")
-                            .setPositiveButton(android.R.string.ok, null);
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
+                        Log.e(TAG, e.getMessage());
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage(e.getMessage())
+                                .setTitle("error")
+                                .setPositiveButton(android.R.string.ok, null);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                    ;
                 }
-                ;
-            }
 
-            ;
-        });
+                ;
+            });
+        }
     }
 }
