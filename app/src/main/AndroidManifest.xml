@@ -7,13 +7,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-feature
-        android:name="android.hardware.camera.autofocus"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
-
     <application
         android:name=".ParseApplication"
         android:allowBackup="true"
@@ -41,12 +34,10 @@
             android:parentActivityName=".LoginActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".MainActivity" />
-<<<<<<< HEAD
         <activity
             android:name=".CreateEventActivity"
-            android:label="Create Event"></activity>
-=======
-        <activity android:name=".CreateEventActivity"></activity>
+            android:label="Create Event" />
+
         <activity
             android:name=".AddFriendsActivity"
             android:label="@string/title_activity_add_friends"
@@ -56,7 +47,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="acc.aviato.MainActivity" />
         </activity>
->>>>>>> 470b2c9598b0251fb63076a992c1c63b63bab1ab
     </application>
 
 </manifest>
