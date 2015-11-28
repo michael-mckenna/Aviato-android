@@ -3,25 +3,33 @@ package acc.aviato;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,6 +38,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
     String mCurrentPhotoPath;
     ImageView mImageView;
+    Bitmap mBitmap;
 
     final int REQUEST_IMAGE_CAPTURE = 1;
     final int REQUEST_IMAGE_PICK = 2;
@@ -39,6 +48,12 @@ public class CreateEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
         mImageView = (ImageView) findViewById(R.id.eventImage);
+        mImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: Add functionality of showImageOptions() so that a user can modify the photo
+            }
+        });
     }
 
     @Override
@@ -94,6 +109,14 @@ public class CreateEventActivity extends AppCompatActivity {
                     eventObject.put(ParseConstants.KEY_EVENT_NAME, event);
                     eventObject.put(ParseConstants.KEY_EVENT_TAG, tag);
                     eventObject.put(ParseConstants.KEY_EVENT_VOTES, vote);
+
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byte[] image = stream.toByteArray();
+                    ParseFile imageFile = new ParseFile("event_image.png", image);
+                    imageFile.saveInBackground();
+                    eventObject.put(ParseConstants.KEY_EVENT_IMAGE, imageFile);
+
                     eventObject.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
@@ -110,69 +133,97 @@ public class CreateEventActivity extends AppCompatActivity {
                             }
                         }
                     });
-
                 }
                 return true;
             case R.id.upload_photo:
-                final CharSequence[] items = {"Take Photo", "Choose from Library"};
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Add Photo")
-                        .setItems(items, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int item) {
-                                if (item == 0) {
-                                    Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    if (takePicture.resolveActivity(getPackageManager()) != null) {
-                                        File photoFile = null;
-                                        try {
-                                            photoFile = createImageFile();
-                                        } catch (IOException ex) {
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(CreateEventActivity.this);
-                                            builder.setMessage("Error: " + ex.getMessage() + ".")
-                                                    .setTitle("Error uploading photo")
-                                                    .setPositiveButton(android.R.string.ok, null);
-                                            AlertDialog alert = builder.create();
-                                            alert.show();
-                                        }
-                                        if (photoFile != null) {
-                                            takePicture.putExtra(MediaStore.EXTRA_OUTPUT,
-                                                    Uri.fromFile(photoFile));
-                                            startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
-                                        }
-                                    }
-                                } else {
-                                    Intent pickPicture = new Intent(Intent.ACTION_PICK,
-                                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                    startActivityForResult(pickPicture, REQUEST_IMAGE_PICK);
-                                }
-                            }
-                        });
-                builder.show();
-                // TODO: Handle new photos: shrink image, upload to Parse, create ImageView for this activity
+                showImageOptions();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    protected void showImageOptions() {
+        // TODO: Modify this so that a delete option will be shown if mImageView exists
+        final CharSequence[] items = {"Take Photo", "Choose from Library"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add Photo")
+                .setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (item == 0) {
+                            Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            if (takePicture.resolveActivity(getPackageManager()) != null) {
+                                File photoFile = null;
+                                try {
+                                    photoFile = createImageFile();
+                                } catch (IOException ex) {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(CreateEventActivity.this);
+                                    builder.setMessage("Error: " + ex.getMessage() + ".")
+                                            .setTitle("Error uploading photo")
+                                            .setPositiveButton(android.R.string.ok, null);
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
+                                }
+                                if (photoFile != null) {
+                                    takePicture.putExtra(MediaStore.EXTRA_OUTPUT,
+                                            Uri.fromFile(photoFile));
+                                    startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+                                }
+                            }
+                        } else {
+                            Intent pickPicture = new Intent(Intent.ACTION_PICK,
+                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(pickPicture, REQUEST_IMAGE_PICK);
+                        }
+                    }
+                });
+        builder.show();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        System.out.println("FILE PATH: " + mCurrentPhotoPath);
-        if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_IMAGE_CAPTURE) {
                 galleryAddPic();
-                setPic();
-            } else {
-                return;
-            }
-        } else if (resultCode == REQUEST_IMAGE_PICK) {
-            if (resultCode == RESULT_OK) {
-                mImageView = (ImageView) findViewById(R.id.eventImage);
-                Bitmap image = BitmapFactory.decodeFile(mCurrentPhotoPath);
-                mImageView.setImageBitmap(image);
-            } else {
-                return;
+                shrinkPic();
+            } else if (requestCode == REQUEST_IMAGE_PICK) {
+                Uri selectedImageUri = data.getData();
+                if (Build.VERSION.SDK_INT < 19) {
+                    mCurrentPhotoPath = getPath(selectedImageUri);
+                    shrinkPic();
+                } else {
+                    ParcelFileDescriptor parcelFileDescriptor;
+                    try {
+                        parcelFileDescriptor = getContentResolver().openFileDescriptor(selectedImageUri, "r");
+                        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+
+                        int targetW = mImageView.getWidth();
+                        int targetH = mImageView.getHeight();
+
+                        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+                        bmOptions.inJustDecodeBounds = true;
+                        BitmapFactory.decodeFileDescriptor(fileDescriptor, null, bmOptions);
+                        int photoW = bmOptions.outWidth;
+                        int photoH = bmOptions.outHeight;
+
+                        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+
+                        bmOptions.inJustDecodeBounds = false;
+                        bmOptions.inSampleSize = scaleFactor;
+                        // This code is ignored on Lollipop devices
+                        bmOptions.inPurgeable = true;
+
+                        mBitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor, null, bmOptions);
+                        parcelFileDescriptor.close();
+                        mImageView.setImageBitmap(mBitmap);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
@@ -206,27 +257,39 @@ public class CreateEventActivity extends AppCompatActivity {
         this.sendBroadcast(mediaScanIntent);
     }
 
-    private void setPic() {
-        // Get the dimensions of the View
+    private void shrinkPic() {
         int targetW = mImageView.getWidth();
         int targetH = mImageView.getHeight();
 
-        // Get the dimensions of the bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
         int photoW = bmOptions.outWidth;
         int photoH = bmOptions.outHeight;
 
-        // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
 
-        // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;
-        // bmOptions.inPurgeable = true;
+        // This code is ignored on Lollipop devices
+        bmOptions.inPurgeable = true;
 
-        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        mImageView.setImageBitmap(bitmap);
+        mBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        mImageView.setImageBitmap(mBitmap);
+    }
+
+    private String getPath(Uri uri) {
+        if (uri == null) {
+            return null;
+        }
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        if (cursor != null) {
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        }
+        return uri.getPath();
     }
 }
