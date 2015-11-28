@@ -17,5 +17,6 @@ public final class ParseConstants {
     public static final String KEY_USERNAME = "username";
     public static final String KEY_FRIENDS_RELATION = "friendsRelation";
     public static final String KEY_FILE = "file";
+    public static final String KEY_EVENT_IMAGE = "eventImage";
 
 }

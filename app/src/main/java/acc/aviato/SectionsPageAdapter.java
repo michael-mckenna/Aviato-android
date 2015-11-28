@@ -8,6 +8,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import java.util.Locale;
 
+/**
+ * @author Liam M.
+ */
+
 public class SectionsPageAdapter extends FragmentPagerAdapter {
 
     protected Context mContext;
@@ -24,6 +28,7 @@ public class SectionsPageAdapter extends FragmentPagerAdapter {
                 return new GroupsFragment();
             case 2:
                 return new FriendsFragment();
+            // FeedFragment created on default is intentional
             default:
                 return new FeedFragment();
         }
