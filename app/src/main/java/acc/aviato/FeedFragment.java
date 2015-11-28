@@ -1,5 +1,6 @@
 package acc.aviato;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.melnykov.fab.FloatingActionButton;
+import com.parse.ParseUser;
 
 public class FeedFragment extends ListFragment {
 
@@ -34,8 +36,17 @@ public class FeedFragment extends ListFragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CreateEventActivity.class);
-                startActivity(intent);
+                if (ParseUser.getCurrentUser() == null) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("You must be signed in to create an event.")
+                            .setTitle("Not signed in")
+                            .setPositiveButton(android.R.string.ok, null);
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                } else {
+                    Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+                    startActivity(intent);
+                }
             }
         });
         return rootView;
@@ -54,13 +65,11 @@ public class FeedFragment extends ListFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.add_event) {
-            // TODO: Add intent to go to CreateNewEventActivity
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
-
-
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/submit_event"
+        android:icon="@android:drawable/ic_menu_send"
+        android:orderInCategory="20"
+        android:title="Submit Event"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/upload_photo"
+        android:icon="@android:drawable/ic_menu_camera"
+        android:orderInCategory="10"
+        android:title="Upload Photo"
+        app:showAsAction="always" />
+</menu>
