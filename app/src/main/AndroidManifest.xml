@@ -41,9 +41,22 @@
             android:parentActivityName=".LoginActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".MainActivity" />
+<<<<<<< HEAD
         <activity
             android:name=".CreateEventActivity"
             android:label="Create Event"></activity>
+=======
+        <activity android:name=".CreateEventActivity"></activity>
+        <activity
+            android:name=".AddFriendsActivity"
+            android:label="@string/title_activity_add_friends"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="acc.aviato.MainActivity" />
+        </activity>
+>>>>>>> 470b2c9598b0251fb63076a992c1c63b63bab1ab
     </application>
 
 </manifest>
