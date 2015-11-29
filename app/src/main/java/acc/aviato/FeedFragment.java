@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.melnykov.fab.FloatingActionButton;
@@ -29,8 +30,9 @@ import java.util.List;
 public class FeedFragment extends ListFragment {
 
     protected List<ParseObject> mEvents;
-    protected ParseRelation<ParseObject>
     protected ParseUser mCurrentUser;
+
+    protected View mRootView;
 
     public FeedFragment() {
         setHasOptionsMenu(true);
@@ -40,9 +42,9 @@ public class FeedFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_feed_activity, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_feed_activity, container, false);
 
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_feed);
+        FloatingActionButton fab = (FloatingActionButton) mRootView.findViewById(R.id.fab_feed);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,7 +61,7 @@ public class FeedFragment extends ListFragment {
                 }
             }
         });
-        return rootView;
+        return mRootView;
     }
 
     @Override
@@ -92,12 +94,9 @@ public class FeedFragment extends ListFragment {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if (e == null) {
-                    // STUFF
-
-                    ListView yourListView = (ListView) findViewById(R.id.itemListView);
-                    ListAdapter customAdapter = new ListAdapter(this, R.layout.itemlistrow, List<yourItem>);
-
-                    yourListView .setAdapter(customAdapter);
+                    ListView listView = getListView();
+                    FeedAdapter customAdapter = new FeedAdapter(getContext(), R.layout.row_event_list, list);
+                    listView.setAdapter(customAdapter);
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setMessage("Error: " + e.getMessage() +".")
