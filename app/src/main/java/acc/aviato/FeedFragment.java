@@ -16,11 +16,21 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.melnykov.fab.FloatingActionButton;
+import com.parse.FindCallback;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
+
+import java.util.List;
 
 public class FeedFragment extends ListFragment {
 
-    public static final String ARG_SECTION_NUMBER = "section_number";
+    protected List<ParseObject> mEvents;
+    protected ParseRelation<ParseObject>
+    protected ParseUser mCurrentUser;
 
     public FeedFragment() {
         setHasOptionsMenu(true);
@@ -71,5 +81,32 @@ public class FeedFragment extends ListFragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        final ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Event");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    // STUFF
+
+                    ListView yourListView = (ListView) findViewById(R.id.itemListView);
+                    ListAdapter customAdapter = new ListAdapter(this, R.layout.itemlistrow, List<yourItem>);
+
+                    yourListView .setAdapter(customAdapter);
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setMessage("Error: " + e.getMessage() +".")
+                            .setTitle("Error")
+                            .setPositiveButton(android.R.string.ok, null);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            }
+        });
     }
 }
