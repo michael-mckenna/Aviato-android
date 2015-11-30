@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="acc.aviato.EventDetailActivity">
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="140dp"
+        android:id="@+id/event_image"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Event Name"
+        android:id="@+id/event_name"
+        android:layout_below="@+id/event_image"
+        android:layout_centerHorizontal="true" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/relativeLayout"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="555 Placeholer Address, College Station, TX"
+        android:id="@+id/address"
+        android:textAlignment="center"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="124dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Comments"
+        android:id="@+id/textView3"
+        android:layout_marginLeft="63dp"
+        android:layout_marginStart="63dp"
+        android:textSize="25sp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/event_name"
+        android:layout_alignStart="@+id/event_name" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/commentButton"
+        android:src="@mipmap/arrow_down"
+        android:layout_above="@+id/relativeLayout"
+        android:layout_toRightOf="@+id/textView3"
+        android:layout_toEndOf="@+id/textView3" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/eventDescription"
+        android:textSize="15sp"
+        android:layout_below="@+id/event_name"
+        android:layout_toLeftOf="@+id/textView3"
+        android:layout_toStartOf="@+id/textView3" />
+
+</RelativeLayout>

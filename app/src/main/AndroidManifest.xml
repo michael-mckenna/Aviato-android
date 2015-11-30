@@ -37,7 +37,6 @@
         <activity
             android:name=".CreateEventActivity"
             android:label="Create Event" />
-
         <activity
             android:name=".AddFriendsActivity"
             android:label="@string/title_activity_add_friends"
@@ -47,6 +46,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="acc.aviato.MainActivity" />
         </activity>
+        <activity android:name=".EventDetailActivity"></activity>
     </application>
 
 </manifest>
