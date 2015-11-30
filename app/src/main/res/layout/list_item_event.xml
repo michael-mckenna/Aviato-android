@@ -27,7 +27,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Text"
+            android:text="Date Stuff"
             android:id="@+id/dateItemText"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
@@ -35,7 +35,46 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:paddingTop="10dp"
-            android:paddingBottom="10dp" />
+            android:paddingBottom="10dp"
+            android:textAlignment="center" />
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/downArrow"
+        android:background="@mipmap/arrow_down"
+        android:layout_marginRight="60dp"
+        android:layout_marginEnd="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/upArrow"
+        android:background="@mipmap/arrow_up"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/downArrow"
+        android:layout_alignStart="@+id/downArrow" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/eventItemText"
+        android:layout_toLeftOf="@+id/downArrow"
+        android:layout_toStartOf="@+id/downArrow">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/votes"
+            android:layout_centerVertical="true"
+            android:textSize="20sp"
+            android:textColor="#511e24"
+            android:textStyle="bold" />
     </RelativeLayout>
 
 </RelativeLayout>
