@@ -12,6 +12,7 @@ public final class ParseConstants {
     public static final String KEY_EVENT_NAME = "eventName";
     public static final String KEY_EVENT_TAG = "eventTags";
     public static final String KEY_EVENT_VOTES = "votes";
+    public static final String KEY_EVENT_DESCRIPTION = "eventDescription";
     public static final String KEY_SENDER_ID = "senderId";
     public static final String KEY_SENDER_NAME = "senderName";
     public static final String KEY_USERNAME = "username";

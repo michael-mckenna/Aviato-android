@@ -3,6 +3,7 @@ package acc.aviato;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 import com.melnykov.fab.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -103,6 +105,25 @@ public class FeedFragment extends ListFragment {
             }
         });
 
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+
+        Intent intent  = new Intent(getActivity(), EventDetailActivity.class);
+        if(parseEvents.get(position).getParseFile(ParseConstants.KEY_EVENT_IMAGE) != null) {
+            ParseFile file = parseEvents.get(position).getParseFile(ParseConstants.KEY_EVENT_IMAGE);
+            Uri fileUri = Uri.parse(file.getUrl());
+            intent.setData(fileUri);
+        } else {
+            Log.d(TAG, "Null image found");
+        }
+        intent.putExtra("EVENT_NAME", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_NAME));
+        intent.putExtra("EVENT_DESCRIPTION", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_DESCRIPTION));
+        //needs address
+        intent.putExtra("EVENT_TAG", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_TAG));
+        startActivity(intent);
     }
 
     @Override

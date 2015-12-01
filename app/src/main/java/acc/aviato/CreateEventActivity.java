@@ -76,18 +76,23 @@ public class CreateEventActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         EditText eventInput;
         EditText tagsInput;
+        EditText descriptionInput;
 
         switch (item.getItemId()) {
             case R.id.submit_event:
                 eventInput = (EditText) findViewById(R.id.eventInput);
                 tagsInput = (EditText) findViewById(R.id.tagsInput);
+                descriptionInput = (EditText) findViewById(R.id.descriptionInput);
 
                 String event = eventInput.getText().toString().trim();
                 String tag = tagsInput.getText().toString().trim();
+                String description = descriptionInput.getText().toString().trim();
                 int vote = 0;
 
                 event = event.trim();
                 tag = tag.trim();
+                description = description.trim();
+
                 if (ParseUser.getCurrentUser() == null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("You must be signed in to create an event.")
@@ -95,7 +100,7 @@ public class CreateEventActivity extends AppCompatActivity {
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog alert = builder.create();
                     alert.show();
-                } else if (event.isEmpty() || tag.isEmpty()) {
+                } else if (event.isEmpty() || tag.isEmpty() || description.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("You must include a name and a tag.")
                             .setTitle("Error")
@@ -109,13 +114,16 @@ public class CreateEventActivity extends AppCompatActivity {
                     eventObject.put(ParseConstants.KEY_EVENT_NAME, event);
                     eventObject.put(ParseConstants.KEY_EVENT_TAG, tag);
                     eventObject.put(ParseConstants.KEY_EVENT_VOTES, vote);
+                    eventObject.put(ParseConstants.KEY_EVENT_DESCRIPTION, description);
 
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    byte[] image = stream.toByteArray();
-                    ParseFile imageFile = new ParseFile("event_image.png", image);
-                    imageFile.saveInBackground();
-                    eventObject.put(ParseConstants.KEY_EVENT_IMAGE, imageFile);
+                    if(mBitmap != null) {
+                        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        byte[] image = stream.toByteArray();
+                        ParseFile imageFile = new ParseFile("event_image.png", image);
+                        imageFile.saveInBackground();
+                        eventObject.put(ParseConstants.KEY_EVENT_IMAGE, imageFile);
+                    }
 
                     eventObject.saveInBackground(new SaveCallback() {
                         @Override
