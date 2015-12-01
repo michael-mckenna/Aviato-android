@@ -7,6 +7,7 @@ public final class ParseConstants {
 
     //class name in Parse
     public static final String CLASS_EVENTS = "Event";
+    public static final String CLASS_TAGS = "Tag";
 
     //field names - match what is already in parse and established from iOS
     public static final String KEY_EVENT_NAME = "eventName";
@@ -20,5 +21,9 @@ public final class ParseConstants {
     public static final String KEY_FILE = "file";
     public static final String KEY_EVENT_IMAGE = "eventImage";
     public static final String KEY_FAVORITE_EVENTS_REALATION = "favoriteEvents";
+
+    public static final String KEY_TAG_ID = "tagId";
+    public static final String KEY_TAG_NAME = "tagName";
+    public static final String KEY_TAG_USAGE = "tagUsageCount";
 
 }
