@@ -20,6 +20,7 @@ public final class ParseConstants {
     public static final String KEY_FRIENDS_RELATION = "friendsRelation";
     public static final String KEY_FILE = "file";
     public static final String KEY_EVENT_IMAGE = "eventImage";
+    public static final String KEY_EVENT_TAG_ID = "eventTagIds";
 
     public static final String KEY_TAG_ID = "tagId";
     public static final String KEY_TAG_NAME = "tagName";
