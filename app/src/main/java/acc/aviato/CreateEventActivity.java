@@ -115,7 +115,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     eventObject.put(ParseConstants.KEY_SENDER_ID, ParseUser.getCurrentUser().getObjectId());
                     eventObject.put(ParseConstants.KEY_SENDER_NAME, ParseUser.getCurrentUser().getUsername());
                     eventObject.put(ParseConstants.KEY_EVENT_NAME, event);
-                    eventObject.put(ParseConstants.KEY_EVENT_TAG, getTagId(tag));
+                    eventObject.put(ParseConstants.KEY_EVENT_TAG_ID , getTagId(tag));
                     eventObject.put(ParseConstants.KEY_EVENT_VOTES, vote);
                     eventObject.put(ParseConstants.KEY_EVENT_DESCRIPTION, description);
 
@@ -338,8 +338,10 @@ public class CreateEventActivity extends AppCompatActivity {
             return newId;
         } else {
             //use old tag object, add 1 to usage count
+            int id = Integer.parseInt(list.get(0).get(ParseConstants.KEY_TAG_ID).toString());
             list.get(0).increment(ParseConstants.KEY_TAG_USAGE);
-            return Integer.parseInt(list.get(0).get(ParseConstants.KEY_TAG_ID).toString());
+            list.get(0).saveInBackground();
+            return id;
         }
     }
 
