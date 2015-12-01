@@ -20,9 +20,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -33,6 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class CreateEventActivity extends AppCompatActivity {
 
@@ -112,7 +115,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     eventObject.put(ParseConstants.KEY_SENDER_ID, ParseUser.getCurrentUser().getObjectId());
                     eventObject.put(ParseConstants.KEY_SENDER_NAME, ParseUser.getCurrentUser().getUsername());
                     eventObject.put(ParseConstants.KEY_EVENT_NAME, event);
-                    eventObject.put(ParseConstants.KEY_EVENT_TAG, tag);
+                    eventObject.put(ParseConstants.KEY_EVENT_TAG, getTagId(tag));
                     eventObject.put(ParseConstants.KEY_EVENT_VOTES, vote);
                     eventObject.put(ParseConstants.KEY_EVENT_DESCRIPTION, description);
 
@@ -300,4 +303,44 @@ public class CreateEventActivity extends AppCompatActivity {
         }
         return uri.getPath();
     }
+
+    private int getTagId(String tag){
+        ParseQuery<ParseObject> tagList = new ParseQuery<ParseObject>(ParseConstants.CLASS_TAGS);
+        tagList.whereEqualTo(ParseConstants.KEY_TAG_NAME, tag);
+        List<ParseObject> list = null;
+        try {
+            list = tagList.find();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+        if (list.isEmpty()) {
+            //create new tag object
+            ParseQuery<ParseObject> tagList2 = new ParseQuery<ParseObject>(ParseConstants.CLASS_TAGS);
+            tagList2.addDescendingOrder(ParseConstants.KEY_TAG_ID);
+            int newId;
+            try {
+                newId = Integer.parseInt(tagList2.find().get(0).get(ParseConstants.KEY_TAG_ID).toString())+1;
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return -1;
+            }
+            ParseObject obj = new ParseObject(ParseConstants.CLASS_TAGS);
+            obj.put(ParseConstants.KEY_TAG_ID,newId);
+            obj.put(ParseConstants.KEY_TAG_USAGE,1);
+            obj.put(ParseConstants.KEY_TAG_NAME,tag);
+            try {
+                obj.save();
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return -1;
+            }
+            return newId;
+        } else {
+            //use old tag object, add 1 to usage count
+            list.get(0).increment(ParseConstants.KEY_TAG_USAGE);
+            return Integer.parseInt(list.get(0).get(ParseConstants.KEY_TAG_ID).toString());
+        }
+    }
+
 }
