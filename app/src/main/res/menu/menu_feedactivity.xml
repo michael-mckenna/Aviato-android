@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/remove_filters"
+        android:icon="@drawable/ic_clear_white_24dp"
+        android:orderInCategory="20"
+        android:title="Remove Filters"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/filter_events"
+        android:icon="@drawable/ic_filter_list_white_24dp"
+        android:orderInCategory="20"
+        android:title="Filter Events"
+        app:showAsAction="always" />
+</menu>
