@@ -41,6 +41,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
     String mCurrentPhotoPath;
     ImageView mImageView;
+    EditText mEditText;
     Bitmap mBitmap;
 
     final int REQUEST_IMAGE_CAPTURE = 1;
@@ -50,6 +51,22 @@ public class CreateEventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
+        mEditText = (EditText)findViewById(R.id.tagsInput);
+        mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    if(mEditText.getText().toString().equals(""))
+                    {
+                        mEditText.setText("#");
+                    }
+                } else {
+                    if(mEditText.getText().toString().equals("#")) {
+                        mEditText.setText("");
+                    }
+                }
+            }
+        });
         mImageView = (ImageView) findViewById(R.id.eventImage);
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
