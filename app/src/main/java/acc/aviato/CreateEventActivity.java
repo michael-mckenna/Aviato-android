@@ -370,7 +370,7 @@ public class CreateEventActivity extends AppCompatActivity {
     }
 
     private boolean validateTags(){
-        String reg = "^#.+$";
+        String reg = "^#[a-zA-Z0-9]+$";
         //In the future, will want to split string by spaces and check each
         if(!mEditText.getText().toString().matches(reg)){
             return false;
