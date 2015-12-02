@@ -129,7 +129,7 @@ public class FeedFragment extends ListFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
-        inflater.inflate(R.menu.title_items, menu);
+        inflater.inflate(R.menu.menu_feedactivity, menu);
     }
 
     @Override

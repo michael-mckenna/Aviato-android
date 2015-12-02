@@ -14,4 +14,7 @@
     <string name="title_activity_add_friends">AddFriendsActivity</string>
     <string name="text_hint_username">Username</string>
     <string name="button_label_add_friend">Add Friend</string>
+
+    <string name="filter">Filter</string>
+    <string name="cancel">Cancel</string>
 </resources>
