@@ -127,7 +127,14 @@ public class CreateEventActivity extends AppCompatActivity {
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog alert = builder.create();
                     alert.show();
-                } else {
+                } else if(!validateTags()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("One or more of your tags is invalid")
+                            .setTitle("Error")
+                            .setPositiveButton(android.R.string.ok, null);
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }else{
                     ParseObject eventObject = new ParseObject(ParseConstants.CLASS_EVENTS);
                     eventObject.put(ParseConstants.KEY_SENDER_ID, ParseUser.getCurrentUser().getObjectId());
                     eventObject.put(ParseConstants.KEY_SENDER_NAME, ParseUser.getCurrentUser().getUsername());
@@ -360,6 +367,15 @@ public class CreateEventActivity extends AppCompatActivity {
             list.get(0).saveInBackground();
             return id;
         }
+    }
+
+    private boolean validateTags(){
+        String reg = "^#.+$";
+        //In the future, will want to split string by spaces and check each
+        if(!mEditText.getText().toString().matches(reg)){
+            return false;
+        }
+        return true;
     }
 
 }
