@@ -23,7 +23,6 @@ public final class ParseConstants {
     public static final String KEY_FAVORITE_EVENTS_REALATION = "favoriteEvents";
     public static final String KEY_EVENT_TAG_ID = "eventTagIds";
 
-
     public static final String KEY_TAG_ID = "tagId";
     public static final String KEY_TAG_NAME = "tagName";
     public static final String KEY_TAG_USAGE = "tagUsageCount";
