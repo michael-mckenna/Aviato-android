@@ -71,14 +71,14 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         }
-        if(id == R.id.filter_events){
+        /*if(id == R.id.filter_events){
             createFilterDialog();
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void createFilterDialog(){
+    /*public void createFilterDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // Add the buttons
         builder.setPositiveButton(R.string.filter, new DialogInterface.OnClickListener() {
@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if (e == null) {
+                    //If I weren't lazy I would make a sorting algorithm here to sort this list by tag popularity, but I'm not even sure that would make a difference so I won't do it for now
                     String[] tagFilters = new String[list.size()];
                     for (int i = 0; i < list.size(); i++) {
                         tagFilters[i]=list.get(i).get(ParseConstants.KEY_TAG_NAME).toString();
@@ -118,6 +119,6 @@ public class MainActivity extends AppCompatActivity {
         // Create the AlertDialog
 
         dialog.show();
-    }
+    }*/
 
 }
