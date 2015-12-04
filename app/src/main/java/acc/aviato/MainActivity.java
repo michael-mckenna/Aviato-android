@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setCurrentItem(1, false);
+        mViewPager.setCurrentItem(0, false);    // Sets the default tab
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.main_tabs);
         tabLayout.setupWithViewPager(mViewPager);
