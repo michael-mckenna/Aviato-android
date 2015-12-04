@@ -43,6 +43,7 @@ public class CreateEventActivity extends AppCompatActivity {
     ImageView mImageView;
     EditText mEditText;
     Bitmap mBitmap;
+    String[] tagArray;
 
     final int REQUEST_IMAGE_CAPTURE = 1;
     final int REQUEST_IMAGE_PICK = 2;
@@ -139,7 +140,10 @@ public class CreateEventActivity extends AppCompatActivity {
                     eventObject.put(ParseConstants.KEY_SENDER_ID, ParseUser.getCurrentUser().getObjectId());
                     eventObject.put(ParseConstants.KEY_SENDER_NAME, ParseUser.getCurrentUser().getUsername());
                     eventObject.put(ParseConstants.KEY_EVENT_NAME, event);
-                    eventObject.put(ParseConstants.KEY_EVENT_TAG_ID , getTagId(tag));
+                    for(String s: tagArray)
+                    {
+                        eventObject.add(ParseConstants.KEY_EVENT_TAG_ID , getTagId(s));
+                    }
                     eventObject.put(ParseConstants.KEY_EVENT_VOTES, vote);
                     eventObject.put(ParseConstants.KEY_EVENT_DESCRIPTION, description);
 
@@ -372,8 +376,12 @@ public class CreateEventActivity extends AppCompatActivity {
     private boolean validateTags(){
         String reg = "^#[a-zA-Z0-9]+$";
         //In the future, will want to split string by spaces and check each
-        if(!mEditText.getText().toString().matches(reg)){
-            return false;
+        tagArray = mEditText.getText().toString().split(" ");
+        for(String s:tagArray)
+        {
+            if(!s.matches(reg)){
+                return false;
+            }
         }
         return true;
     }

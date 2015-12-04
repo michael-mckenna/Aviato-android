@@ -50,8 +50,8 @@ public class FeedFragment extends ListFragment {
 
     private LayoutInflater inflater;
 
-    //private ArrayList<Integer> filters = new ArrayList<>();
-    private int filters = -1;
+    private ArrayList<Integer> filters = new ArrayList<>();
+    //private int filters = -1;
 
     public FeedFragment() {
         setHasOptionsMenu(true);
@@ -131,7 +131,7 @@ public class FeedFragment extends ListFragment {
             case R.id.filter_events:
                 createFilterDialog(); return true;
             case R.id.remove_filters:
-                filters = -1; refreshEvents(); return true;
+                filters = new ArrayList<>(); refreshEvents(); return true;
         }
     }
 
@@ -151,7 +151,7 @@ public class FeedFragment extends ListFragment {
                     //You screwed up
                     return;
                 }
-                filters=tid;
+                filters.add(tid);
                 refreshEvents();
             }
         });
@@ -209,22 +209,9 @@ public class FeedFragment extends ListFragment {
     public void refreshEvents(){
         ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(ParseConstants.CLASS_EVENTS);
         query.whereExists(ParseConstants.KEY_EVENT_NAME);
-        if(filters!=-1) {
-            query.whereEqualTo(ParseConstants.KEY_EVENT_TAG_ID, filters);
+        if(!filters.isEmpty()) {
+            query.whereContainsAll(ParseConstants.KEY_EVENT_TAG_ID, filters);
         }
-        /*if(!filters.isEmpty()) {
-            int[] ugh = new int[filters.size()];
-            for(int i= 0;i<filters.size();i++)
-            {
-                ugh[i]=filters.get(i);
-                System.out.println(ugh[i]);
-            }
-            query.whereContainsAll(ParseConstants.KEY_EVENT_TAG_ID, Arrays.asList(ugh));
-        }
-        for(int i =0; i<filters.size();i++)
-        {
-            query.whereEqualTo(ParseConstants.KEY_EVENT_TAG_ID, filters.get(i));
-        }*/
         query.addDescendingOrder(ParseConstants.KEY_EVENT_VOTES);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -248,6 +235,8 @@ public class FeedFragment extends ListFragment {
                                 parseEvents);
                         setListAdapter(adapt);
                     }
+                } else {
+                    e.printStackTrace();
                 }
             }
         });
