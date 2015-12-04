@@ -9,13 +9,14 @@
     <item
         android:id="@+id/active_filters"
         android:title=""
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
     <item
         android:id="@+id/remove_filters"
         android:icon="@drawable/ic_clear_white_24dp"
         android:orderInCategory="20"
         android:title="Remove Filters"
-        app:showAsAction="always" />
+        app:showAsAction="always"
+        android:visible="false"/>
     <item
         android:id="@+id/filter_events"
         android:icon="@drawable/ic_filter_list_white_24dp"

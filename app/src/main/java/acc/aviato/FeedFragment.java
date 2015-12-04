@@ -46,6 +46,7 @@ public class FeedFragment extends ListFragment {
     public static final String TAG = FeedFragment.class.getSimpleName();
     private int[] voteArray;
     private MenuItem activeFilters;
+    private MenuItem clearF;
 
     private List<ParseObject> parseEvents;
     private FeedAdapter adapt;
@@ -122,6 +123,7 @@ public class FeedFragment extends ListFragment {
         menu.clear();
         inflater.inflate(R.menu.menu_feedactivity, menu);
         activeFilters=menu.findItem(R.id.active_filters);
+        clearF=menu.findItem(R.id.remove_filters);
     }
 
     @Override
@@ -257,6 +259,12 @@ public class FeedFragment extends ListFragment {
                     for(int i=0;i<list.size();i++)
                     {
                         s=s+list.get(i).get(ParseConstants.KEY_TAG_NAME).toString();
+                    }
+                    if(list.isEmpty())
+                    {
+                        clearF.setVisible(false);
+                    } else {
+                        clearF.setVisible(true);
                     }
                     activeFilters.setTitle(s);
                 }
