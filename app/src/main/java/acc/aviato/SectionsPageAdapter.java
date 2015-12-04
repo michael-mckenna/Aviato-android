@@ -24,9 +24,9 @@ public class SectionsPageAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position) {
-            case 0:
-                return new GroupsFragment();
-            case 2:
+            // case 0:
+                // return new GroupsFragment();
+            case 1:
                 return new FriendsFragment();
             // FeedFragment created on default is intentional
             default:
@@ -36,18 +36,18 @@ public class SectionsPageAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
         Locale l = Locale.getDefault();
         switch (position) {
+            // case 0:
+                // return mContext.getString(R.string.title_section1).toUpperCase(l);
             case 0:
-                return mContext.getString(R.string.title_section1).toUpperCase(l);
-            case 1:
                 return mContext.getString(R.string.title_section2).toUpperCase(l);
-            case 2:
+            case 1:
                 return mContext.getString(R.string.title_section3).toUpperCase(l);
         }
         return null;
