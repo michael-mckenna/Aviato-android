@@ -11,6 +11,7 @@
     <string name="title_section1">Groups</string>
     <string name="title_section2">Events</string>
     <string name="title_section3">Friends</string>
+    <string name="title_section4">Favorites</string>
     <string name="title_activity_add_friends">AddFriendsActivity</string>
     <string name="text_hint_username">Username</string>
     <string name="button_label_add_friend">Add Friend</string>
