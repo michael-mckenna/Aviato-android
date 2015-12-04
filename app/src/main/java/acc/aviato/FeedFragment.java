@@ -1,7 +1,10 @@
 package acc.aviato;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -31,15 +35,26 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.zip.Inflater;
 
 public class FeedFragment extends ListFragment {
 
     public static final String ARG_SECTION_NUMBER = "section_number";
     public static final String TAG = FeedFragment.class.getSimpleName();
     private int[] voteArray;
+    private MenuItem activeFilters;
+    private MenuItem clearF;
 
     private List<ParseObject> parseEvents;
+    private FeedAdapter adapt;
+
+    private LayoutInflater inflater;
+
+    private ArrayList<Integer> filters = new ArrayList<>();
+    //private int filters = -1;
 
     public FeedFragment() {
         setHasOptionsMenu(true);
@@ -80,30 +95,7 @@ public class FeedFragment extends ListFragment {
     public void onResume() {
         super.onResume();
 
-        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(ParseConstants.CLASS_EVENTS);
-        query.whereExists(ParseConstants.KEY_EVENT_NAME);
-        query.addDescendingOrder(ParseConstants.KEY_EVENT_VOTES);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                if(e == null) {
-                    parseEvents = list;
-                    voteArray = new int[parseEvents.size()];
-                    for(int i = 0; i < parseEvents.size(); i++) {
-                        voteArray[i] = parseEvents.get(i).getInt(ParseConstants.KEY_EVENT_VOTES);
-                    }
-                    System.out.println(list.size() + " LIST SIZE"); // this equals 69! so that's working...
-                    if(getListView().getAdapter() == null) {
-                        FeedAdapter adapter = new FeedAdapter(
-                                getListView().getContext(),
-                                parseEvents);
-                        setListAdapter(adapter);
-                    } else {
-                        //refill adapter here
-                    }
-                }
-            }
-        });
+        refreshEvents();
 
     }
 
@@ -129,7 +121,9 @@ public class FeedFragment extends ListFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
-        inflater.inflate(R.menu.title_items, menu);
+        inflater.inflate(R.menu.menu_feedactivity, menu);
+        activeFilters=menu.findItem(R.id.active_filters);
+        clearF=menu.findItem(R.id.remove_filters);
     }
 
     @Override
@@ -139,7 +133,143 @@ public class FeedFragment extends ListFragment {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+            case R.id.filter_events:
+                createFilterDialog(); return true;
+            case R.id.remove_filters:
+                filters = new ArrayList<>(); refreshEvents(); setActiveFilters(); return true;
         }
+    }
+
+    public void createFilterDialog(){
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext());
+        inflater = getActivity().getLayoutInflater();
+        final View view = inflater.inflate(R.layout.content_filter_dialog,null);
+        // Add the buttons
+        builder.setPositiveButton(R.string.filter, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                AutoCompleteTextView ta = (AutoCompleteTextView)view.findViewById(R.id.filter_autocomplete);
+                String tag = ta.getText().toString();
+                int tid = tagExists(tag);
+                if(tid==-1)
+                {
+                    //You screwed up
+                    return;
+                }
+                filters.add(tid);
+                refreshEvents();
+                setActiveFilters();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        // Set other dialog properties
+        builder.setTitle("Filter Events");
+        builder.setView(view);
+
+        final android.support.v7.app.AlertDialog dialog = builder.create();
+
+
+        ParseQuery<ParseObject> comp = new ParseQuery<ParseObject>(ParseConstants.CLASS_TAGS);
+        comp.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    //If I weren't lazy I would make a sorting algorithm here to sort this list by tag popularity, but I'm not even sure that would make a difference so I won't do it for now
+                    String[] tagFilters = new String[list.size()];
+                    for (int i = 0; i < list.size(); i++) {
+                        tagFilters[i]=list.get(i).get(ParseConstants.KEY_TAG_NAME).toString();
+                    }
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),android.R.layout.simple_dropdown_item_1line,tagFilters);
+                    AutoCompleteTextView textView = (AutoCompleteTextView)dialog.findViewById(R.id.filter_autocomplete);
+                    textView.setAdapter(adapter);
+
+                }
+            }
+        });
+
+        // Create the AlertDialog
+
+        dialog.show();
+    }
+
+    public int tagExists(String s){
+        ParseQuery<ParseObject> q = new ParseQuery<ParseObject>(ParseConstants.CLASS_TAGS);
+        q.whereEqualTo(ParseConstants.KEY_TAG_NAME, s);
+        List<ParseObject> list = null;
+        try {
+            list = q.find();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+        if(list.isEmpty()) {
+            return -1;
+        }
+        return Integer.parseInt(list.get(0).get(ParseConstants.KEY_TAG_ID).toString());
+    }
+
+    public void refreshEvents(){
+        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(ParseConstants.CLASS_EVENTS);
+        query.whereExists(ParseConstants.KEY_EVENT_NAME);
+        if(!filters.isEmpty()) {
+            query.whereContainsAll(ParseConstants.KEY_EVENT_TAG_ID, filters);
+        }
+        query.addDescendingOrder(ParseConstants.KEY_EVENT_VOTES);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    parseEvents = list;
+                    voteArray = new int[parseEvents.size()];
+                    for (int i = 0; i < parseEvents.size(); i++) {
+                        voteArray[i] = parseEvents.get(i).getInt(ParseConstants.KEY_EVENT_VOTES);
+                    }
+                    System.out.println(list.size() + " LIST SIZE"); // this equals 69! so that's working...
+                    if (getListView().getAdapter() == null) {
+                        adapt = new FeedAdapter(
+                                getListView().getContext(),
+                                parseEvents);
+                        setListAdapter(adapt);
+                    } else {
+                        //refill adapter here
+                        adapt = new FeedAdapter(
+                                getListView().getContext(),
+                                parseEvents);
+                        setListAdapter(adapt);
+                    }
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void setActiveFilters(){
+        ParseQuery<ParseObject> q = new ParseQuery<ParseObject>(ParseConstants.CLASS_TAGS);
+        q.whereContainedIn(ParseConstants.KEY_TAG_ID,filters);
+        q.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if(e==null){
+                    String s = "";
+                    for(int i=0;i<list.size();i++)
+                    {
+                        s=s+list.get(i).get(ParseConstants.KEY_TAG_NAME).toString();
+                    }
+                    if(list.isEmpty())
+                    {
+                        clearF.setVisible(false);
+                    } else {
+                        clearF.setVisible(true);
+                    }
+                    activeFilters.setTitle(s);
+                }
+            }
+        });
     }
 
     public class FeedAdapter extends ArrayAdapter<ParseObject> {
