@@ -7,6 +7,10 @@
         android:title="@string/action_settings"
         app:showAsAction="never" />
     <item
+        android:id="@+id/active_filters"
+        android:title=""
+        app:showAsAction="always"/>
+    <item
         android:id="@+id/remove_filters"
         android:icon="@drawable/ic_clear_white_24dp"
         android:orderInCategory="20"

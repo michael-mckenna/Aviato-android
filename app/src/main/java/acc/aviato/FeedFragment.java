@@ -2,6 +2,7 @@ package acc.aviato;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -44,6 +45,7 @@ public class FeedFragment extends ListFragment {
     public static final String ARG_SECTION_NUMBER = "section_number";
     public static final String TAG = FeedFragment.class.getSimpleName();
     private int[] voteArray;
+    private MenuItem activeFilters;
 
     private List<ParseObject> parseEvents;
     private FeedAdapter adapt;
@@ -119,6 +121,7 @@ public class FeedFragment extends ListFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.menu_feedactivity, menu);
+        activeFilters=menu.findItem(R.id.active_filters);
     }
 
     @Override
@@ -131,7 +134,7 @@ public class FeedFragment extends ListFragment {
             case R.id.filter_events:
                 createFilterDialog(); return true;
             case R.id.remove_filters:
-                filters = new ArrayList<>(); refreshEvents(); return true;
+                filters = new ArrayList<>(); refreshEvents(); setActiveFilters(); return true;
         }
     }
 
@@ -153,6 +156,7 @@ public class FeedFragment extends ListFragment {
                 }
                 filters.add(tid);
                 refreshEvents();
+                setActiveFilters();
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -237,6 +241,24 @@ public class FeedFragment extends ListFragment {
                     }
                 } else {
                     e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void setActiveFilters(){
+        ParseQuery<ParseObject> q = new ParseQuery<ParseObject>(ParseConstants.CLASS_TAGS);
+        q.whereContainedIn(ParseConstants.KEY_TAG_ID,filters);
+        q.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if(e==null){
+                    String s = "";
+                    for(int i=0;i<list.size();i++)
+                    {
+                        s=s+list.get(i).get(ParseConstants.KEY_TAG_NAME).toString();
+                    }
+                    activeFilters.setTitle(s);
                 }
             }
         });
