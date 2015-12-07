@@ -16,13 +16,20 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -45,29 +52,53 @@ public class CreateEventActivity extends AppCompatActivity {
     Bitmap mBitmap;
     String[] tagArray;
 
+    TextView mLocationText;
+    Button mEventLocationButton;
+
+    ParseObject mEventObject;
+    ParseGeoPoint mGeoPoint;
+
     final int REQUEST_IMAGE_CAPTURE = 1;
     final int REQUEST_IMAGE_PICK = 2;
+    final int PLACE_PICKER_REQUEST = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
-        mEditText = (EditText)findViewById(R.id.tagsInput);
+
+        mLocationText = (TextView) findViewById(R.id.location_text);
+        mEditText = (EditText) findViewById(R.id.tagsInput);
         mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus){
-                    if(mEditText.getText().toString().equals(""))
-                    {
+                if (hasFocus) {
+                    if (mEditText.getText().toString().equals("")) {
                         mEditText.setText("#");
                     }
                 } else {
-                    if(mEditText.getText().toString().equals("#")) {
+                    if (mEditText.getText().toString().equals("#")) {
                         mEditText.setText("");
                     }
                 }
             }
         });
+
+        mEventLocationButton = (Button) findViewById(R.id.location_button);
+        final PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+        mEventLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    startActivityForResult(builder.build(CreateEventActivity.this), PLACE_PICKER_REQUEST);
+                } catch (GooglePlayServicesRepairableException e) {
+                    e.printStackTrace();
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         mImageView = (ImageView) findViewById(R.id.eventImage);
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,35 +159,51 @@ public class CreateEventActivity extends AppCompatActivity {
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog alert = builder.create();
                     alert.show();
-                } else if(!validateTags()) {
+                } else if (description.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("One or more of your tags is invalid")
+                    builder.setMessage("You must include a description.")
                             .setTitle("Error")
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog alert = builder.create();
                     alert.show();
-                }else{
-                    ParseObject eventObject = new ParseObject(ParseConstants.CLASS_EVENTS);
-                    eventObject.put(ParseConstants.KEY_SENDER_ID, ParseUser.getCurrentUser().getObjectId());
-                    eventObject.put(ParseConstants.KEY_SENDER_NAME, ParseUser.getCurrentUser().getUsername());
-                    eventObject.put(ParseConstants.KEY_EVENT_NAME, event);
-                    for(String s: tagArray)
-                    {
-                        eventObject.add(ParseConstants.KEY_EVENT_TAG_ID , getTagId(s));
+                } else if (!validateTags()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("One or more of your tags is invalid.")
+                            .setTitle("Error")
+                            .setPositiveButton(android.R.string.ok, null);
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                } else if (mGeoPoint == null){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("You must select a location.")
+                            .setTitle("Error")
+                            .setPositiveButton(android.R.string.ok, null);
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                } else {
+                    mEventObject = new ParseObject(ParseConstants.CLASS_EVENTS);
+                    mEventObject.put(ParseConstants.KEY_SENDER_ID, ParseUser.getCurrentUser().getObjectId());
+                    mEventObject.put(ParseConstants.KEY_SENDER_NAME, ParseUser.getCurrentUser().getUsername());
+                    mEventObject.put(ParseConstants.KEY_EVENT_NAME, event);
+                    for (String s : tagArray) {
+                        mEventObject.add(ParseConstants.KEY_EVENT_TAG_ID, getTagId(s));
                     }
-                    eventObject.put(ParseConstants.KEY_EVENT_VOTES, vote);
-                    eventObject.put(ParseConstants.KEY_EVENT_DESCRIPTION, description);
+                    mEventObject.put(ParseConstants.KEY_EVENT_VOTES, vote);
+                    mEventObject.put(ParseConstants.KEY_EVENT_DESCRIPTION, description);
 
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    if(mBitmap != null) {
+                    if (mBitmap != null) {
                         mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                         byte[] image = stream.toByteArray();
                         ParseFile imageFile = new ParseFile("event_image.png", image);
                         imageFile.saveInBackground();
-                        eventObject.put(ParseConstants.KEY_EVENT_IMAGE, imageFile);
+                        mEventObject.put(ParseConstants.KEY_EVENT_IMAGE, imageFile);
                     }
 
-                    eventObject.saveInBackground(new SaveCallback() {
+                    mEventObject.put(ParseConstants.KEY_EVENT_LOCATION, mGeoPoint);
+                    mEventObject.saveInBackground();
+
+                    mEventObject.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
                             if (e == null) {
@@ -263,6 +310,17 @@ public class CreateEventActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+            } else if (requestCode == PLACE_PICKER_REQUEST) {
+                Place place = PlacePicker.getPlace(data, this);
+                LatLng latLng = place.getLatLng();
+                mGeoPoint = new ParseGeoPoint(latLng.latitude, latLng.longitude);
+                if (place.getName() != null) {
+                    mLocationText.setText(place.getName());
+                } else if (place.getAddress() != null) {
+                    mLocationText.setText(place.getAddress());
+                } else {
+                    mLocationText.setText(latLng.latitude + ", " + latLng.longitude);
+                }
             }
         }
     }
@@ -332,7 +390,7 @@ public class CreateEventActivity extends AppCompatActivity {
         return uri.getPath();
     }
 
-    private int getTagId(String tag){
+    private int getTagId(String tag) {
         ParseQuery<ParseObject> tagList = new ParseQuery<ParseObject>(ParseConstants.CLASS_TAGS);
         tagList.whereEqualTo(ParseConstants.KEY_TAG_NAME, tag);
         List<ParseObject> list = null;
@@ -348,15 +406,15 @@ public class CreateEventActivity extends AppCompatActivity {
             tagList2.addDescendingOrder(ParseConstants.KEY_TAG_ID);
             int newId;
             try {
-                newId = Integer.parseInt(tagList2.find().get(0).get(ParseConstants.KEY_TAG_ID).toString())+1;
+                newId = Integer.parseInt(tagList2.find().get(0).get(ParseConstants.KEY_TAG_ID).toString()) + 1;
             } catch (ParseException e) {
                 e.printStackTrace();
                 return -1;
             }
             ParseObject obj = new ParseObject(ParseConstants.CLASS_TAGS);
-            obj.put(ParseConstants.KEY_TAG_ID,newId);
-            obj.put(ParseConstants.KEY_TAG_USAGE,1);
-            obj.put(ParseConstants.KEY_TAG_NAME,tag);
+            obj.put(ParseConstants.KEY_TAG_ID, newId);
+            obj.put(ParseConstants.KEY_TAG_USAGE, 1);
+            obj.put(ParseConstants.KEY_TAG_NAME, tag);
             try {
                 obj.save();
             } catch (ParseException e) {
@@ -373,13 +431,12 @@ public class CreateEventActivity extends AppCompatActivity {
         }
     }
 
-    private boolean validateTags(){
+    private boolean validateTags() {
         String reg = "^#[a-zA-Z0-9]+$";
         //In the future, will want to split string by spaces and check each
         tagArray = mEditText.getText().toString().split(" ");
-        for(String s:tagArray)
-        {
-            if(!s.matches(reg)){
+        for (String s : tagArray) {
+            if (!s.matches(reg)) {
                 return false;
             }
         }
