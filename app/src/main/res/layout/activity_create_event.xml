@@ -42,4 +42,24 @@
         android:layout_below="@+id/tagsInput"
         android:layout_centerHorizontal="true" />
 
+    <Button
+        android:id="@+id/location_button"
+        android:layout_height="50dp"
+        android:layout_width="50dp"
+        android:text="Place"
+        android:layout_below="@+id/tagsInput"
+        android:layout_alignRight="@+id/tagsInput"
+        android:layout_alignEnd="@+id/tagsInput" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/location_text"
+        android:layout_alignTop="@+id/eventImage"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/location_button"
+        android:layout_toStartOf="@+id/location_button"
+        android:layout_alignBottom="@+id/location_button" />
+
 </RelativeLayout>
