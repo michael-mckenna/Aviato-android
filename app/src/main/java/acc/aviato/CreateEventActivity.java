@@ -201,7 +201,9 @@ public class CreateEventActivity extends AppCompatActivity {
                         eventObject.add(ParseConstants.KEY_EVENT_TAG_ID , getTagId(s));
                     }
                     eventObject.put(ParseConstants.KEY_EVENT_VOTES, vote);
-                    eventObject.put(ParseConstants.KEY_EVENT_DATE, date);
+                    if(date != null) {
+                        eventObject.put(ParseConstants.KEY_EVENT_DATE, date);
+                    }
                     eventObject.put(ParseConstants.KEY_EVENT_DESCRIPTION, description);
 
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
