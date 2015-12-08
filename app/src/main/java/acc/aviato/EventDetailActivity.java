@@ -27,6 +27,7 @@ public class EventDetailActivity extends AppCompatActivity {
     TextView mEventNameView, mEventDescriptionView;
     ImageView mEventImageView;
 
+    ParseObject mEvent;
     String eventId, eventName, eventDescription;
     Uri eventImageUri;
 
@@ -51,8 +52,9 @@ public class EventDetailActivity extends AppCompatActivity {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
-                    eventName = parseObject.getString(ParseConstants.KEY_EVENT_NAME);
-                    eventDescription = parseObject.getString(ParseConstants.KEY_EVENT_DESCRIPTION);
+                    mEvent = parseObject;
+                    eventName = mEvent.getString(ParseConstants.KEY_EVENT_NAME);
+                    eventDescription = mEvent.getString(ParseConstants.KEY_EVENT_DESCRIPTION);
                     // eventImageUri = Uri.parse(parseObject.getParseFile(ParseConstants.KEY_EVENT_IMAGE).getUrl());
                 } else {
                     // Failure (cannot find requested event of FeedFragment's listView)
@@ -75,40 +77,36 @@ public class EventDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mFavoriteEventRelation = ParseUser.getCurrentUser().getRelation(ParseConstants.KEY_FAVORITE_EVENTS_REALATION);
-                ParseQuery<ParseObject> query = mFavoriteEventRelation.getQuery();  // Returns objects in relation
-                try {
-                    query.get(eventId);
-                } catch (ParseException e1) {
-                    System.out.print("Failed");
-                }
-                query.findInBackground(new FindCallback<ParseObject>() {
-                    @Override
-                    public void done(List<ParseObject> users, ParseException e) {
-                        // EVENT BEING SEARCHED FOR IS RETURNED; THE QUERY DOESN'T SEEM TO BE LOCALIZED TO FAVORITES RELATION
-                        if (e == null && users == null) {
-                            // TODO: Add logic to remove a favorite if it's already an existing relation
-                            mFavoriteEventRelation.add(parseObject);
-                            ParseUser.getCurrentUser().saveEventually();
-                            try {
-                                ParseUser.getCurrentUser().save();
-                            } catch (ParseException e1) {
-                                e1.printStackTrace();
+                final ParseQuery<ParseObject> query = mFavoriteEventRelation.getQuery();  // Returns objects in relation
+                    query.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> objects, ParseException e) {
+                            // If the list of favorite events has the specific event in it...
+                            if (e == null && objects.contains(mEvent)) {
+                                // TODO: Add logic to remove a favorite if it's already an existing relation
+                                mFavoriteEventRelation.remove(mEvent);
+                                ParseUser.getCurrentUser().saveEventually();
+                                try {
+                                    ParseUser.getCurrentUser().save();
+                                } catch (ParseException e1) {
+                                    e1.printStackTrace();
+                                }
+                                Log.i(TAG, "Event unfavorited!");
+                                // If the list does not contain the event...
+                            } else if (e == null && !objects.contains(mEvent)) {
+                                mFavoriteEventRelation.add(mEvent);
+                                ParseUser.getCurrentUser().saveEventually();
+                                try {
+                                    ParseUser.getCurrentUser().save();
+                                } catch (ParseException e1) {
+                                    e1.printStackTrace();
+                                }
+                                Log.i(TAG, "Event favorited!");
+                            } else {
+                                Log.i(TAG, "Error in favorite process.");
                             }
-                            Log.i(TAG, "Event favorited!");
-                        } else if (parseObject != null) {
-                            mFavoriteEventRelation.remove(parseObject);
-                            ParseUser.getCurrentUser().saveEventually();
-                            try {
-                                ParseUser.getCurrentUser().save();
-                            } catch (ParseException e1) {
-                                e1.printStackTrace();
-                            }
-                            Log.i(TAG, "Event unfavorited!");
-                        } else {
-                            Log.i(TAG, "Error favorite.");
                         }
-                    }
-                });
+                    });
             }
         });
 
