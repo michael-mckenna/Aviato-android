@@ -1,6 +1,9 @@
 package acc.aviato;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,12 +14,17 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -41,10 +49,20 @@ import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class CreateEventActivity extends AppCompatActivity {
+    public static String TAG = CreateEventActivity.class.getSimpleName();
+
+    //UI References
+    private DatePickerDialog DatePickerDialog;
+
+    private SimpleDateFormat dateFormatter;
+
+    Calendar Date = Calendar.getInstance();
 
     String mCurrentPhotoPath;
     ImageView mImageView;
@@ -62,6 +80,8 @@ public class CreateEventActivity extends AppCompatActivity {
     final int REQUEST_IMAGE_PICK = 2;
     final int PLACE_PICKER_REQUEST = 3;
 
+    Button btn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,13 +96,57 @@ public class CreateEventActivity extends AppCompatActivity {
                     if (mEditText.getText().toString().equals("")) {
                         mEditText.setText("#");
                     }
-                } else {
-                    if (mEditText.getText().toString().equals("#")) {
-                        mEditText.setText("");
-                    }
+                } else if (mEditText.getText().toString().equals("#")) {
+                    mEditText.setText("");
                 }
+
+
+                dateFormatter = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+
+                findViewsById();
+
+                setDateTimeField();
             }
         });
+    }
+
+    private void findViewsById() {
+        btn = (Button) findViewById(R.id.eventDateInput);
+        btn.setText(dateFormatter.format(Date.getTime()));
+    }
+
+    private void setDateTimeField() {
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog.show();
+
+                mEditText = (EditText) findViewById(R.id.tagsInput);
+                mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if (hasFocus) {
+                            if (mEditText.getText().toString().equals("")) {
+                                mEditText.setText("#");
+                            }
+                        } else {
+                            if (mEditText.getText().toString().equals("#")) {
+                                mEditText.setText("");
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        //<<<<<<<HEAD
+        Calendar newCalendar = Calendar.getInstance();
+        DatePickerDialog = new DatePickerDialog(CreateEventActivity.this, new DatePickerDialog.OnDateSetListener() {
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Date.set(year, monthOfYear, dayOfMonth);
+                btn.setText(dateFormatter.format(Date.getTime()));
+            }
+        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
 
         mEventLocationButton = (Button) findViewById(R.id.location_button);
         final PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
@@ -137,6 +201,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 descriptionInput = (EditText) findViewById(R.id.descriptionInput);
 
                 String event = eventInput.getText().toString().trim();
+                String date = dateFormatter.format(Date.getTime());
                 String tag = tagsInput.getText().toString().trim();
                 String description = descriptionInput.getText().toString().trim();
                 int vote = 0;
@@ -173,7 +238,7 @@ public class CreateEventActivity extends AppCompatActivity {
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog alert = builder.create();
                     alert.show();
-                } else if (mGeoPoint == null){
+                } else if (mGeoPoint == null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("You must select a location.")
                             .setTitle("Error")
@@ -189,7 +254,11 @@ public class CreateEventActivity extends AppCompatActivity {
                         mEventObject.add(ParseConstants.KEY_EVENT_TAG_ID, getTagId(s));
                     }
                     mEventObject.put(ParseConstants.KEY_EVENT_VOTES, vote);
+                    if (date != null) {
+                        mEventObject.put(ParseConstants.KEY_EVENT_DATE, date);
+                    }
                     mEventObject.put(ParseConstants.KEY_EVENT_DESCRIPTION, description);
+                    mEventObject.put(ParseConstants.KEY_EVENT_VOTES, vote);
 
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     if (mBitmap != null) {

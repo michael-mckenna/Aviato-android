@@ -363,7 +363,7 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
             }
             holder.votes.setText(mEvents.get(position).getInt(ParseConstants.KEY_EVENT_VOTES) + "");
             holder.event.setText(mEvents.get(position).getString(ParseConstants.KEY_EVENT_NAME));
-            //holder.date.setText(mEvents.get(position).getString(ParseConstants.KEY_EVENT_DATE))
+            holder.date.setText(mEvents.get(position).getString(ParseConstants.KEY_EVENT_DATE));
 
             holder.downArrow.setOnClickListener(new View.OnClickListener() {
                 @Override
