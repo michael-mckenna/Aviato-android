@@ -52,6 +52,8 @@ public class CreateEventActivity extends AppCompatActivity {
     Bitmap mBitmap;
     String[] tagArray;
 
+    boolean mSubmitted = false;
+
     TextView mLocationText;
     Button mEventLocationButton;
 
@@ -173,14 +175,15 @@ public class CreateEventActivity extends AppCompatActivity {
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog alert = builder.create();
                     alert.show();
-                } else if (mGeoPoint == null){
+                } else if (mGeoPoint == null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("You must select a location.")
                             .setTitle("Error")
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog alert = builder.create();
                     alert.show();
-                } else {
+                } else if (!mSubmitted) {
+                    mSubmitted = true;
                     mEventObject = new ParseObject(ParseConstants.CLASS_EVENTS);
                     mEventObject.put(ParseConstants.KEY_SENDER_ID, ParseUser.getCurrentUser().getObjectId());
                     mEventObject.put(ParseConstants.KEY_SENDER_NAME, ParseUser.getCurrentUser().getUsername());
@@ -201,14 +204,13 @@ public class CreateEventActivity extends AppCompatActivity {
                     }
 
                     mEventObject.put(ParseConstants.KEY_EVENT_LOCATION, mGeoPoint);
-                    mEventObject.saveInBackground();
+
 
                     mEventObject.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
                             if (e == null) {
                                 Toast.makeText(CreateEventActivity.this, "Event Uploaded", Toast.LENGTH_SHORT).show();
-                                CreateEventActivity.this.finish();
                             } else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(CreateEventActivity.this);
                                 builder.setMessage(e.getMessage() + "")
@@ -219,6 +221,8 @@ public class CreateEventActivity extends AppCompatActivity {
                             }
                         }
                     });
+
+                    CreateEventActivity.this.finish();
                 }
                 return true;
             case R.id.upload_photo:

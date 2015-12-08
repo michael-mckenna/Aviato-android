@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -23,8 +24,11 @@ import java.util.List;
 
 public class EventDetailActivity extends AppCompatActivity {
 
-    TextView eventName, eventDescription;
-    ImageView eventImage;
+    TextView mEventNameView, mEventDescriptionView;
+    ImageView mEventImageView;
+
+    String eventId, eventName, eventDescription;
+    Uri eventImageUri;
 
     Button mFavoriteButton;
     ParseRelation mFavoriteEventRelation;
@@ -39,47 +43,78 @@ public class EventDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_detail);
 
         mIntent = getIntent();
+        eventId = mIntent.getStringExtra(ParseConstants.KEY_EVENT_ID);
 
-        Uri imageUri = mIntent.getData();
+        // Look for an event object with the name of the event id that was passed
+        ParseQuery<ParseObject> eventQuery = ParseQuery.getQuery(ParseConstants.CLASS_EVENTS);
+        eventQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                if (e == null) {
+                    eventName = parseObject.getString(ParseConstants.KEY_EVENT_NAME);
+                    eventDescription = parseObject.getString(ParseConstants.KEY_EVENT_DESCRIPTION);
+                    // eventImageUri = Uri.parse(parseObject.getParseFile(ParseConstants.KEY_EVENT_IMAGE).getUrl());
+                } else {
+                    // Failure (cannot find requested event of FeedFragment's listView)
+                }
+            }
+        });
 
-        eventName = (TextView) findViewById(R.id.event_name);
-        eventName.setText(mIntent.getStringExtra("EVENT_NAME"));
+        // TODO: Remove uses of mIntent in favor of direct use of Parse queries
 
-        eventDescription = (TextView) findViewById(R.id.eventDescription);
-        eventDescription.setText(mIntent.getStringExtra("EVENT_DESCRIPTION"));
+        mEventNameView = (TextView) findViewById(R.id.event_name);
+        mEventNameView.setText(eventName);
+
+        mEventDescriptionView = (TextView) findViewById(R.id.eventDescription);
+        mEventDescriptionView.setText(eventDescription);
 
         mFavoriteButton = (Button) findViewById(R.id.favorite_button);
+        // Get the user's favoriteEvents, if the current event is in the relation, remove it
+        // Otherwise, add it
         mFavoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Modify this so that it searches for an event ID instead of name to avoid conflicts
                 mFavoriteEventRelation = ParseUser.getCurrentUser().getRelation(ParseConstants.KEY_FAVORITE_EVENTS_REALATION);
-                ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstants.CLASS_EVENTS);
-                query.whereEqualTo(ParseConstants.KEY_EVENT_NAME, mIntent.getStringExtra("EVENT_NAME"));
+                ParseQuery<ParseObject> query = mFavoriteEventRelation.getQuery();  // Returns objects in relation
+                try {
+                    query.get(eventId);
+                } catch (ParseException e1) {
+                    System.out.print("Failed");
+                }
                 query.findInBackground(new FindCallback<ParseObject>() {
                     @Override
-                    public void done(List<ParseObject> list, ParseException e) {
-                        if (e == null) {
+                    public void done(List<ParseObject> users, ParseException e) {
+                        // EVENT BEING SEARCHED FOR IS RETURNED; THE QUERY DOESN'T SEEM TO BE LOCALIZED TO FAVORITES RELATION
+                        if (e == null && users == null) {
                             // TODO: Add logic to remove a favorite if it's already an existing relation
-                            mFavoriteEventRelation.add(list.get(0));
+                            mFavoriteEventRelation.add(parseObject);
                             ParseUser.getCurrentUser().saveEventually();
                             try {
                                 ParseUser.getCurrentUser().save();
                             } catch (ParseException e1) {
                                 e1.printStackTrace();
                             }
-                            Log.i(TAG, "Worked!");
+                            Log.i(TAG, "Event favorited!");
+                        } else if (parseObject != null) {
+                            mFavoriteEventRelation.remove(parseObject);
+                            ParseUser.getCurrentUser().saveEventually();
+                            try {
+                                ParseUser.getCurrentUser().save();
+                            } catch (ParseException e1) {
+                                e1.printStackTrace();
+                            }
+                            Log.i(TAG, "Event unfavorited!");
                         } else {
-                            Log.i(TAG, "Did not find event.");
+                            Log.i(TAG, "Error favorite.");
                         }
                     }
                 });
             }
         });
 
-        eventImage = (ImageView) findViewById(R.id.event_image);
-        if (imageUri != null) {
-            Picasso.with(this).load(imageUri.toString()).into(eventImage);
+        mEventImageView = (ImageView) findViewById(R.id.event_image);
+        if (eventImageUri != null) {
+            Picasso.with(this).load(eventImageUri.toString()).into(mEventImageView);
         } else {
             Log.d(TAG, "Image was null");
         }

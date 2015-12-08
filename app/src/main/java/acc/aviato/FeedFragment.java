@@ -119,19 +119,9 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-
         Intent intent = new Intent(getActivity(), EventDetailActivity.class);
-        if (parseEvents.get(position).getParseFile(ParseConstants.KEY_EVENT_IMAGE) != null) {
-            ParseFile file = parseEvents.get(position).getParseFile(ParseConstants.KEY_EVENT_IMAGE);
-            Uri fileUri = Uri.parse(file.getUrl());
-            intent.setData(fileUri);
-        } else {
-            Log.d(TAG, "Null image found");
-        }
-        intent.putExtra("EVENT_NAME", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_NAME));
-        intent.putExtra("EVENT_DESCRIPTION", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_DESCRIPTION));
-        //needs address
-        intent.putExtra("EVENT_TAG", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_TAG));
+        String objectId = parseEvents.get(position).getObjectId();
+        intent.putExtra(ParseConstants.KEY_EVENT_ID, objectId);
         startActivity(intent);
     }
 
