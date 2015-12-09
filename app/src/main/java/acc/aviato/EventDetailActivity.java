@@ -55,7 +55,14 @@ public class EventDetailActivity extends AppCompatActivity {
                     mEvent = parseObject;
                     eventName = mEvent.getString(ParseConstants.KEY_EVENT_NAME);
                     eventDescription = mEvent.getString(ParseConstants.KEY_EVENT_DESCRIPTION);
-                    // eventImageUri = Uri.parse(parseObject.getParseFile(ParseConstants.KEY_EVENT_IMAGE).getUrl());
+                    mEventNameView = (TextView) findViewById(R.id.event_name);
+                    mEventNameView.setText(eventName);
+
+                    mEventDescriptionView = (TextView) findViewById(R.id.event_description);
+                    mEventDescriptionView.setText(eventDescription);
+                    if (mEvent.getParseFile(ParseConstants.KEY_EVENT_IMAGE) != null) {
+                        eventImageUri = Uri.parse(parseObject.getParseFile(ParseConstants.KEY_EVENT_IMAGE).getUrl());
+                    }
                 } else {
                     // Failure (cannot find requested event of FeedFragment's listView)
                 }
@@ -63,12 +70,6 @@ public class EventDetailActivity extends AppCompatActivity {
         });
 
         // TODO: Remove uses of mIntent in favor of direct use of Parse queries
-
-        mEventNameView = (TextView) findViewById(R.id.event_name);
-        mEventNameView.setText(eventName);
-
-        mEventDescriptionView = (TextView) findViewById(R.id.eventDescription);
-        mEventDescriptionView.setText(eventDescription);
 
         mFavoriteButton = (Button) findViewById(R.id.favorite_button);
         // Get the user's favoriteEvents, if the current event is in the relation, remove it
