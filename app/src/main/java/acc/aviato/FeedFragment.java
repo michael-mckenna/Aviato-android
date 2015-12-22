@@ -34,6 +34,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.melnykov.fab.FloatingActionButton;
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -130,8 +131,12 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
         }
         intent.putExtra("EVENT_NAME", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_NAME));
         intent.putExtra("EVENT_DESCRIPTION", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_DESCRIPTION));
-        //needs address
+        double latitude = parseEvents.get(position).getParseGeoPoint(ParseConstants.KEY_EVENT_LOCATION).getLatitude();
+        double longitude = parseEvents.get(position).getParseGeoPoint(ParseConstants.KEY_EVENT_LOCATION).getLongitude();
+        intent.putExtra("EVENT_LATITUDE", latitude);
+        intent.putExtra("EVENT_LONGITUDE", longitude);
         intent.putExtra("EVENT_TAG", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_TAG));
+        intent.putExtra("EVENT_ID", parseEvents.get(position).getObjectId());
         startActivity(intent);
     }
 
