@@ -29,5 +29,6 @@ public final class ParseConstants {
     public static final String KEY_TAG_USAGE = "tagUsageCount";
 
     public static final String KEY_EVENT_LOCATION = "eventLocation";
+    public static final String KEY_EVENT_DATE = "eventDate";
 
 }

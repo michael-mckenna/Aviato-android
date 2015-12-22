@@ -34,6 +34,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.melnykov.fab.FloatingActionButton;
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -119,9 +120,23 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
+
         Intent intent = new Intent(getActivity(), EventDetailActivity.class);
-        String objectId = parseEvents.get(position).getObjectId();
-        intent.putExtra(ParseConstants.KEY_EVENT_ID, objectId);
+        if (parseEvents.get(position).getParseFile(ParseConstants.KEY_EVENT_IMAGE) != null) {
+            ParseFile file = parseEvents.get(position).getParseFile(ParseConstants.KEY_EVENT_IMAGE);
+            Uri fileUri = Uri.parse(file.getUrl());
+            intent.setData(fileUri);
+        } else {
+            Log.d(TAG, "Null image found");
+        }
+        intent.putExtra("EVENT_NAME", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_NAME));
+        intent.putExtra("EVENT_DESCRIPTION", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_DESCRIPTION));
+        double latitude = parseEvents.get(position).getParseGeoPoint(ParseConstants.KEY_EVENT_LOCATION).getLatitude();
+        double longitude = parseEvents.get(position).getParseGeoPoint(ParseConstants.KEY_EVENT_LOCATION).getLongitude();
+        intent.putExtra("EVENT_LATITUDE", latitude);
+        intent.putExtra("EVENT_LONGITUDE", longitude);
+        intent.putExtra("EVENT_TAG", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_TAG));
+        intent.putExtra("EVENT_ID", parseEvents.get(position).getObjectId());
         startActivity(intent);
     }
 
@@ -353,7 +368,7 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
             }
             holder.votes.setText(mEvents.get(position).getInt(ParseConstants.KEY_EVENT_VOTES) + "");
             holder.event.setText(mEvents.get(position).getString(ParseConstants.KEY_EVENT_NAME));
-            //holder.date.setText(mEvents.get(position).getString(ParseConstants.KEY_EVENT_DATE))
+            holder.date.setText(mEvents.get(position).getString(ParseConstants.KEY_EVENT_DATE));
 
             holder.downArrow.setOnClickListener(new View.OnClickListener() {
                 @Override

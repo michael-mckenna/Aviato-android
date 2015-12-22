@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -20,11 +21,13 @@ import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 public class EventDetailActivity extends AppCompatActivity {
 
-    TextView mEventNameView, mEventDescriptionView;
+    TextView mEventNameView, mEventDescriptionView, mEventAddressView;
     ImageView mEventImageView;
 
     ParseObject mEvent;
@@ -44,32 +47,41 @@ public class EventDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_detail);
 
         mIntent = getIntent();
-        eventId = mIntent.getStringExtra(ParseConstants.KEY_EVENT_ID);
 
+        Uri imageUri = mIntent.getData();
+
+        mEventNameView = (TextView) findViewById(R.id.event_name);
+        mEventNameView.setText(mIntent.getStringExtra("EVENT_NAME"));
+
+        mEventDescriptionView = (TextView) findViewById(R.id.event_description);
+        mEventDescriptionView.setText(mIntent.getStringExtra("EVENT_DESCRIPTION"));
+
+        mEventAddressView = (TextView) findViewById(R.id.address);
+        mEventAddressView.setText("(" + mIntent.getDoubleExtra("EVENT_LATITUDE", 0) + ", " + mIntent.getDoubleExtra("EVENT_LONGITUDE", 0) + ")");
+
+        eventId = mIntent.getStringExtra("EVENT_ID");
+
+        mEventImageView = (ImageView) findViewById(R.id.event_image);
+        if (imageUri != null) {
+            Picasso.with(this).load(imageUri.toString()).into(mEventImageView);
+        } else {
+            Log.d(TAG, "Image was null");
+        }
+
+        // TODO: Remove uses of mIntent in favor of direct use of Parse queries
         // Look for an event object with the name of the event id that was passed
         ParseQuery<ParseObject> eventQuery = ParseQuery.getQuery(ParseConstants.CLASS_EVENTS);
         eventQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
+                Log.i(TAG, "Event found!");
                 if (e == null) {
                     mEvent = parseObject;
-                    eventName = mEvent.getString(ParseConstants.KEY_EVENT_NAME);
-                    eventDescription = mEvent.getString(ParseConstants.KEY_EVENT_DESCRIPTION);
-                    mEventNameView = (TextView) findViewById(R.id.event_name);
-                    mEventNameView.setText(eventName);
-
-                    mEventDescriptionView = (TextView) findViewById(R.id.event_description);
-                    mEventDescriptionView.setText(eventDescription);
-                    if (mEvent.getParseFile(ParseConstants.KEY_EVENT_IMAGE) != null) {
-                        eventImageUri = Uri.parse(parseObject.getParseFile(ParseConstants.KEY_EVENT_IMAGE).getUrl());
-                    }
                 } else {
                     // Failure (cannot find requested event of FeedFragment's listView)
                 }
             }
         });
-
-        // TODO: Remove uses of mIntent in favor of direct use of Parse queries
 
         mFavoriteButton = (Button) findViewById(R.id.favorite_button);
         // Get the user's favoriteEvents, if the current event is in the relation, remove it
@@ -83,6 +95,7 @@ public class EventDetailActivity extends AppCompatActivity {
                         @Override
                         public void done(List<ParseObject> objects, ParseException e) {
                             // If the list of favorite events has the specific event in it...
+                            Log.i(TAG, "Event detail query completed!");
                             if (e == null && objects.contains(mEvent)) {
                                 // TODO: Add logic to remove a favorite if it's already an existing relation
                                 mFavoriteEventRelation.remove(mEvent);
