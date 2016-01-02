@@ -2,8 +2,6 @@ package acc.aviato;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,12 +12,8 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -101,15 +95,39 @@ public class CreateEventActivity extends AppCompatActivity {
                 } else if (mEditText.getText().toString().equals("#")) {
                     mEditText.setText("");
                 }
-
-
-                dateFormatter = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
-
-                findViewsById();
-
-                setDateTimeField();
             }
         });
+
+
+        dateFormatter = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+        findViewsById();
+        setDateTimeField();
+
+        mEventLocationButton = (Button) findViewById(R.id.location_button);
+        final PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+        mEventLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("Clicked!");
+                try {
+                    startActivityForResult(builder.build(CreateEventActivity.this), PLACE_PICKER_REQUEST);
+                } catch (GooglePlayServicesRepairableException e) {
+                    e.printStackTrace();
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        mImageView = (ImageView) findViewById(R.id.eventImage);
+        mImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: Add functionality of showImageOptions() so that a user can modify the photo
+            }
+        });
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void findViewsById() {
@@ -141,7 +159,6 @@ public class CreateEventActivity extends AppCompatActivity {
             }
         });
 
-        //<<<<<<<HEAD
         Calendar newCalendar = Calendar.getInstance();
         DatePickerDialog = new DatePickerDialog(CreateEventActivity.this, new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -149,31 +166,6 @@ public class CreateEventActivity extends AppCompatActivity {
                 btn.setText(dateFormatter.format(Date.getTime()));
             }
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
-
-        mEventLocationButton = (Button) findViewById(R.id.location_button);
-        final PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-        mEventLocationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    startActivityForResult(builder.build(CreateEventActivity.this), PLACE_PICKER_REQUEST);
-                } catch (GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        mImageView = (ImageView) findViewById(R.id.eventImage);
-        mImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: Add functionality of showImageOptions() so that a user can modify the photo
-            }
-        });
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

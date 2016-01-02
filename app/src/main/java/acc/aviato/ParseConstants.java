@@ -13,7 +13,6 @@ public final class ParseConstants {
     public static final String KEY_EVENT_ID = "objectId";   // Note: use getObjectId() to get ID of a specific object
     public static final String KEY_EVENT_NAME = "eventName";
     public static final String KEY_EVENT_TAG = "eventTags";
-    public static final String KEY_EVENT_DATE = "eventDate";
     public static final String KEY_EVENT_VOTES = "votes";
     public static final String KEY_EVENT_DESCRIPTION = "eventDescription";
     public static final String KEY_SENDER_ID = "senderId";
