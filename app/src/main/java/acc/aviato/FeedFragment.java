@@ -1,8 +1,5 @@
 package acc.aviato;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,7 +7,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,13 +15,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.ScaleAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,23 +25,17 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.melnykov.fab.FloatingActionButton;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.zip.Inflater;
 
 public class FeedFragment extends ListFragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -94,13 +79,12 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
     public void onResume() {
         super.onResume();
 
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
+        // mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        /*
         if (mLastLocation != null) {
             refreshEvents();
-        } else {
-            Toast.makeText(getActivity(), "Location is not available.", Toast.LENGTH_LONG).show();
         }
+        */
     }
 
     @Override
@@ -295,6 +279,7 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
     @Override
     public void onConnected(Bundle bundle) {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        refreshEvents();
     }
 
     @Override
