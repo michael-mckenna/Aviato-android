@@ -172,6 +172,8 @@ public class CreateEventActivity extends AppCompatActivity {
                 // TODO: Add functionality of showImageOptions() so that a user can modify the photo
             }
         });
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -296,6 +298,9 @@ public class CreateEventActivity extends AppCompatActivity {
                 return true;
             case R.id.upload_photo:
                 showImageOptions();
+                return true;
+            case android.R.id.home:
+                this.finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -19,6 +19,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -76,24 +80,6 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_feed_activity, container, false);
-
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_feed);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ParseUser.getCurrentUser() == null) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage("You must be signed in to create an event.")
-                            .setTitle("Not signed in")
-                            .setPositiveButton(android.R.string.ok, null);
-                    AlertDialog alert = builder.create();
-                    alert.show();
-                } else {
-                    Intent intent = new Intent(getActivity(), CreateEventActivity.class);
-                    startActivity(intent);
-                }
-            }
-        });
 
         return rootView;
     }
