@@ -1,5 +1,6 @@
 package acc.aviato;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -74,7 +75,7 @@ public class EventDetailActivity extends AppCompatActivity {
         eventQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
-                Log.i(TAG, "Event found!");
+                // Event found
                 if (e == null) {
                     mEvent = parseObject;
                 } else {
@@ -89,15 +90,14 @@ public class EventDetailActivity extends AppCompatActivity {
         mFavoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFavoriteEventRelation = ParseUser.getCurrentUser().getRelation(ParseConstants.KEY_FAVORITE_EVENTS_REALATION);
-                final ParseQuery<ParseObject> query = mFavoriteEventRelation.getQuery();  // Returns objects in relation
+                if (ParseUser.getCurrentUser() != null) {
+                    mFavoriteEventRelation = ParseUser.getCurrentUser().getRelation(ParseConstants.KEY_FAVORITE_EVENTS_REALATION);
+                    final ParseQuery<ParseObject> query = mFavoriteEventRelation.getQuery();  // Returns objects in relation
                     query.findInBackground(new FindCallback<ParseObject>() {
                         @Override
                         public void done(List<ParseObject> objects, ParseException e) {
-                            // If the list of favorite events has the specific event in it...
-                            Log.i(TAG, "Event detail query completed!");
+                            // If the list of favorite events has the specific event in it, favorite it.
                             if (e == null && objects.contains(mEvent)) {
-                                // TODO: Add logic to remove a favorite if it's already an existing relation
                                 mFavoriteEventRelation.remove(mEvent);
                                 ParseUser.getCurrentUser().saveEventually();
                                 try {
@@ -105,8 +105,7 @@ public class EventDetailActivity extends AppCompatActivity {
                                 } catch (ParseException e1) {
                                     e1.printStackTrace();
                                 }
-                                Log.i(TAG, "Event unfavorited!");
-                                // If the list does not contain the event...
+                                // If the list does not contain the event, unfavorite it.
                             } else if (e == null && !objects.contains(mEvent)) {
                                 mFavoriteEventRelation.add(mEvent);
                                 ParseUser.getCurrentUser().saveEventually();
@@ -115,12 +114,31 @@ public class EventDetailActivity extends AppCompatActivity {
                                 } catch (ParseException e1) {
                                     e1.printStackTrace();
                                 }
-                                Log.i(TAG, "Event favorited!");
                             } else {
-                                Log.i(TAG, "Error in favorite process.");
+                                // Error
                             }
                         }
                     });
+                } else {
+                    ParseQuery<ParseObject> favoriteQuery = ParseQuery.getQuery(ParseConstants.CLASS_EVENTS)
+                            .fromLocalDatastore();
+
+                    favoriteQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
+                        @Override
+                        public void done(ParseObject event, ParseException e) {
+                            if (e == null) {
+                                System.out.println("Unpined");
+                                event.unpinInBackground("FavoritedEvents");
+                            } else if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
+                                System.out.println("Pinned");
+                                mEvent.pinInBackground("FavoritedEvents");
+                            } else {
+                                Log.e(TAG, e.getMessage());
+                            }
+                        }
+                    });
+
+                }
             }
         });
 

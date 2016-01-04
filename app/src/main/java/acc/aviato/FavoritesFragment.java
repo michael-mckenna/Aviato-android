@@ -68,10 +68,8 @@ public class FavoritesFragment extends ListFragment {
     @Override
     public void onResume() {
         super.onResume();
-
-
+        getListView().setChoiceMode(ListView.CHOICE_MODE_NONE);
         if (ParseUser.getCurrentUser() != null) {
-            getListView().setChoiceMode(ListView.CHOICE_MODE_NONE);
             currentUser = ParseUser.getCurrentUser();
             mFavoritesRelation = currentUser.getRelation(ParseConstants.KEY_FAVORITE_EVENTS_REALATION);
 
@@ -84,6 +82,38 @@ public class FavoritesFragment extends ListFragment {
                 public void done(List<ParseObject> events, ParseException e) {
                     if (e == null) {
                     /* success */
+                        mEvents = events;
+                        String[] favoriteEvents = new String[mEvents.size()];
+                        int i = 0;
+                        for (ParseObject object : mEvents) {
+                            favoriteEvents[i] = object.getString(ParseConstants.KEY_EVENT_NAME);
+                            i++;
+                        }
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                                getContext(), android.R.layout.simple_list_item_1,
+                                favoriteEvents);
+                        setListAdapter(adapter);
+
+                    } else {
+                    /* error */
+                        Log.e(TAG, e.getMessage());
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage(e.getMessage())
+                                .setTitle(getString(R.string.error_title))
+                                .setPositiveButton(android.R.string.ok, null);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                }
+            });
+        } else {
+            ParseQuery<ParseObject> favoriteQuery = ParseQuery.getQuery(ParseConstants.CLASS_EVENTS)
+                    .fromLocalDatastore();
+
+            favoriteQuery.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> events, ParseException e) {
+                    if (e == null) {
                         mEvents = events;
                         String[] favoriteEvents = new String[mEvents.size()];
                         int i = 0;
