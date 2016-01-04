@@ -49,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (ParseUser.getCurrentUser() == null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("You must be signed in to create an event.")
-                            .setTitle("Not signed in")
+                    builder.setMessage(getString(R.string.error_sign_in))
+                            .setTitle(getString(R.string.error_title_sign_in))
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog alert = builder.create();
                     alert.show();

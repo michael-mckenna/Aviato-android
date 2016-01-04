@@ -112,7 +112,7 @@ public class FriendsFragment extends ListFragment {
                         Log.e(TAG, e.getMessage());
                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                         builder.setMessage(e.getMessage())
-                                .setTitle("error")
+                                .setTitle(getString(R.string.error_title))
                                 .setPositiveButton(android.R.string.ok, null);
                         AlertDialog dialog = builder.create();
                         dialog.show();

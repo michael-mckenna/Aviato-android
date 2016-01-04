@@ -48,8 +48,8 @@ public class SignUpActivity extends AppCompatActivity {
 
                 if (username.isEmpty() || password.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
-                    builder.setMessage("Please complete all required fields.")
-                            .setTitle("Empty Fields")
+                    builder.setMessage(getString(R.string.error_sign_in_incomplete))
+                            .setTitle(getString(R.string.error_title_empty))
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog dialog = builder.create();
                     dialog.show();
@@ -74,7 +74,7 @@ public class SignUpActivity extends AppCompatActivity {
                             } else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
                                 builder.setMessage("Error: " + e.getMessage() + ".")
-                                        .setTitle("Sign up error")
+                                        .setTitle(getString(R.string.error_title_sign_up))
                                         .setPositiveButton(android.R.string.ok, null);
                                 AlertDialog dialog = builder.create();
                                 dialog.show();

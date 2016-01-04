@@ -156,13 +156,13 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
                 setActiveFilters();
             }
         });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User cancelled the dialog
             }
         });
         // Set other dialog properties
-        builder.setTitle("Filter Events");
+        builder.setTitle(getString(R.string.filter_title));
         builder.setView(view);
 
         final android.support.v7.app.AlertDialog dialog = builder.create();
@@ -350,10 +350,9 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
                         @Override
                         public void done(ParseException e) {
                             if (e == null) {
-                                Log.d(TAG, "SUCCESSFULLY VOTED");
                                 notifyDataSetChanged();
                             } else {
-                                Toast.makeText(getActivity(), "Can't vote while offline!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), getString(R.string.error_offline), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -369,10 +368,9 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
                         @Override
                         public void done(ParseException e) {
                             if (e == null) {
-                                Log.d(TAG, "SUCCESSFULLY VOTED");
                                 notifyDataSetChanged();
                             } else {
-                                Toast.makeText(getActivity(), "Can't vote while offline!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), getString(R.string.error_offline), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

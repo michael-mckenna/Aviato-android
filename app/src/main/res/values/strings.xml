@@ -16,6 +16,29 @@
     <string name="text_hint_username">Username</string>
     <string name="button_label_add_friend">Add Friend</string>
 
+    <string name="photo_take">Take Photo</string>
+    <string name="photo_gallery">Choose from Library</string>
+    <string name="photo_title_add">Add Photo</string>
+
+    <string name="filter_title">Filter Events</string>
     <string name="filter">Filter</string>
-    <string name="cancel">Cancel</string>
+
+    <string name="month_date_format">mm-dd-yyyy</string>
+
+    <string name="success_uploaded">Event uploaded.</string>
+
+    <string name="error_title">Error</string>
+    <string name="error_title_sign_in">Not signed in</string>
+    <string name="error_title_sign_up">Error signing up</string>
+    <string name="error_title_empty">Empty Fields</string>
+    <string name="error_title_photo_upload">Error uploading photo</string>
+    <string name="error_incomplete">Please complete all required fields.</string>
+    <string name="error_sign_in">You must be signed in to create an event.</string>
+    <string name="error_name_tag">You must include a name and a tag.</string>
+    <string name="error_description">You must include a description.</string>
+    <string name="error_invalid_tags">One or more of your tags is invalid.</string>
+    <string name="error_location">You must select a location.</string>
+    <string name="error_offline">You are offline.</string>
+    <string name="error_title_login">Error logging in.</string>
+    <string name="error_sign_in_incomplete">Please complete all required fields.</string>
 </resources>
