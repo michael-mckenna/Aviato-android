@@ -99,7 +99,7 @@ public class CreateEventActivity extends AppCompatActivity {
         });
 
 
-        dateFormatter = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+        dateFormatter = new SimpleDateFormat(getString(R.string.month_date_format), Locale.US);
         findViewsById();
         setDateTimeField();
 
@@ -108,7 +108,6 @@ public class CreateEventActivity extends AppCompatActivity {
         mEventLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Clicked!");
                 try {
                     startActivityForResult(builder.build(CreateEventActivity.this), PLACE_PICKER_REQUEST);
                 } catch (GooglePlayServicesRepairableException e) {
@@ -208,36 +207,36 @@ public class CreateEventActivity extends AppCompatActivity {
 
                 if (ParseUser.getCurrentUser() == null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("You must be signed in to create an event.")
-                            .setTitle("Error")
+                    builder.setMessage(getString(R.string.error_sign_in))
+                            .setTitle(getString(R.string.error_title))
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog alert = builder.create();
                     alert.show();
                 } else if (event.isEmpty() || tag.isEmpty() || description.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("You must include a name and a tag.")
-                            .setTitle("Error")
+                    builder.setMessage(getString(R.string.error_name_tag))
+                            .setTitle(getString(R.string.error_title))
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog alert = builder.create();
                     alert.show();
                 } else if (description.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("You must include a description.")
-                            .setTitle("Error")
+                    builder.setMessage(getString(R.string.error_description))
+                            .setTitle(getString(R.string.error_title))
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog alert = builder.create();
                     alert.show();
                 } else if (!validateTags()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("One or more of your tags is invalid.")
-                            .setTitle("Error")
+                    builder.setMessage(getString(R.string.error_invalid_tags))
+                            .setTitle(getString(R.string.error_title))
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog alert = builder.create();
                     alert.show();
                 } else if (mGeoPoint == null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("You must select a location.")
-                            .setTitle("Error")
+                    builder.setMessage(getString(R.string.error_location))
+                            .setTitle(getString(R.string.error_title))
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog alert = builder.create();
                     alert.show();
@@ -273,11 +272,11 @@ public class CreateEventActivity extends AppCompatActivity {
                         @Override
                         public void done(ParseException e) {
                             if (e == null) {
-                                Toast.makeText(CreateEventActivity.this, "Event Uploaded", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(CreateEventActivity.this, getString(R.string.success_uploaded), Toast.LENGTH_SHORT).show();
                             } else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(CreateEventActivity.this);
                                 builder.setMessage(e.getMessage() + "")
-                                        .setTitle("Error")
+                                        .setTitle(getString(R.string.error_title))
                                         .setPositiveButton(android.R.string.ok, null);
                                 AlertDialog dialog = builder.create();
                                 dialog.show();
@@ -301,10 +300,10 @@ public class CreateEventActivity extends AppCompatActivity {
 
     protected void showImageOptions() {
         // TODO: Modify this so that a delete option will be shown if mImageView exists
-        final CharSequence[] items = {"Take Photo", "Choose from Library"};
+        final CharSequence[] items = {getString(R.string.photo_take), getString(R.string.photo_gallery)};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Add Photo")
+        builder.setTitle(getString(R.string.photo_title_add))
                 .setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
@@ -317,7 +316,7 @@ public class CreateEventActivity extends AppCompatActivity {
                                 } catch (IOException ex) {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(CreateEventActivity.this);
                                     builder.setMessage("Error: " + ex.getMessage() + ".")
-                                            .setTitle("Error uploading photo")
+                                            .setTitle(getString(R.string.error_title_photo_upload))
                                             .setPositiveButton(android.R.string.ok, null);
                                     AlertDialog alert = builder.create();
                                     alert.show();

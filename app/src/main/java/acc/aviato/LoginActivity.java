@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.PasswordTransformationMethod;
 import android.text.method.SingleLineTransformationMethod;
-import android.text.method.TransformationMethod;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -77,8 +76,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (username.isEmpty() || password.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                    builder.setMessage("Please complete all required fields.")
-                            .setTitle("Empty Fields")
+                    builder.setMessage(getString(R.string.error_incomplete))
+                            .setTitle(getString(R.string.error_title_empty))
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog dialog = builder.create();
                     dialog.show();
@@ -100,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
                             } else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                                 builder.setMessage(e.getMessage())
-                                        .setTitle("Error logging in.")
+                                        .setTitle(getString(R.string.error_title_login))
                                         .setPositiveButton(android.R.string.ok, null);
                                 AlertDialog dialog = builder.create();
                                 dialog.show();
