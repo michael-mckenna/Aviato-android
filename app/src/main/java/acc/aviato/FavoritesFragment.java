@@ -89,9 +89,10 @@ public class FavoritesFragment extends ListFragment {
                             favoriteEvents[i] = object.getString(ParseConstants.KEY_EVENT_NAME);
                             i++;
                         }
-                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                                getContext(), android.R.layout.simple_list_item_1,
-                                favoriteEvents);
+                        // Occasional error below: Attempt to invoke virtual method 'java.lang.Object android.content.Context.getSystemService(java.lang.String)' on a null object reference
+                        // I think getContext() is not available yet
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                                android.R.layout.simple_list_item_1, favoriteEvents);
                         setListAdapter(adapter);
 
                     } else {

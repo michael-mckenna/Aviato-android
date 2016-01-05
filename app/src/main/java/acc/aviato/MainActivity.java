@@ -1,27 +1,18 @@
 package acc.aviato;
 
-
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
-import android.widget.TextView;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.common.ConnectionResult;
 import com.melnykov.fab.FloatingActionButton;
 import com.parse.ParseUser;
 
@@ -30,7 +21,10 @@ public class MainActivity extends AppCompatActivity {
     protected SectionsPageAdapter mSectionsPagerAdapter;
     protected ViewPager mViewPager;
 
+    SwipeRefreshLayout mSwipeRefreshLayout;
     FloatingActionButton mFab;
+
+    int mCurrentTabPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                mCurrentTabPosition = tab.getPosition();
                 mViewPager.setCurrentItem(tab.getPosition());
                 animateFab(tab.getPosition());
             }
@@ -79,9 +74,22 @@ public class MainActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_dark, android.R.color.holo_blue_light,
+                android.R.color.holo_green_light, android.R.color.holo_green_light);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (mCurrentTabPosition == 0) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    FeedFragment feedFragment = (FeedFragment) getSupportFragmentManager().getFragments().get(mCurrentTabPosition);
+                    feedFragment.refreshEvents();
+                }
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -110,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     protected void animateFab(final int position) {
         // Creating a custom animation will allow more controlled animations
         if (position != 0) {
@@ -119,6 +126,4 @@ public class MainActivity extends AppCompatActivity {
             mFab.show();
         }
     }
-
-
 }

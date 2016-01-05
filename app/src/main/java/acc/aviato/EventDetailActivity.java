@@ -58,7 +58,7 @@ public class EventDetailActivity extends AppCompatActivity {
         mEventDescriptionView.setText(mIntent.getStringExtra("EVENT_DESCRIPTION"));
 
         mEventAddressView = (TextView) findViewById(R.id.address);
-        mEventAddressView.setText("(" + mIntent.getDoubleExtra("EVENT_LATITUDE", 0) + ", " + mIntent.getDoubleExtra("EVENT_LONGITUDE", 0) + ")");
+        mEventAddressView.setText(mIntent.getStringExtra("EVENT_ADDRESS"));
 
         eventId = mIntent.getStringExtra("EVENT_ID");
 
