@@ -3,11 +3,14 @@ package acc.aviato;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,12 +37,13 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class FeedFragment extends ListFragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    public static final String ARG_SECTION_NUMBER = "section_number";
     public static final String TAG = FeedFragment.class.getSimpleName();
     private int[] voteArray;
     private MenuItem activeFilters;
@@ -54,7 +58,6 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
     Location mLastLocation;
 
     private ArrayList<Integer> filters = new ArrayList<>();
-    //private int filters = -1;
 
     public FeedFragment() {
         setHasOptionsMenu(true);
@@ -69,7 +72,6 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
         return rootView;
     }
 
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         buildGoogleApiClient();
@@ -79,12 +81,9 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
     public void onResume() {
         super.onResume();
 
-        // mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        /*
         if (mLastLocation != null) {
             refreshEvents();
         }
-        */
     }
 
     @Override
@@ -92,21 +91,31 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
         super.onListItemClick(l, v, position, id);
 
         Intent intent = new Intent(getActivity(), EventDetailActivity.class);
+
+        Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
+        List<Address> addresses;
+        double latitude = parseEvents.get(position).getParseGeoPoint(ParseConstants.KEY_EVENT_LOCATION).getLatitude();
+        double longitude = parseEvents.get(position).getParseGeoPoint(ParseConstants.KEY_EVENT_LOCATION).getLongitude();
+
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            intent.putExtra("EVENT_ADDRESS", addresses.get(0).getAddressLine(0));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        intent.putExtra("EVENT_NAME", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_NAME));
+        intent.putExtra("EVENT_DESCRIPTION", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_DESCRIPTION));
+        intent.putExtra("EVENT_TAG", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_TAG));
+        intent.putExtra("EVENT_ID", parseEvents.get(position).getObjectId());
         if (parseEvents.get(position).getParseFile(ParseConstants.KEY_EVENT_IMAGE) != null) {
             ParseFile file = parseEvents.get(position).getParseFile(ParseConstants.KEY_EVENT_IMAGE);
             Uri fileUri = Uri.parse(file.getUrl());
             intent.setData(fileUri);
         } else {
-            Log.d(TAG, "Null image found");
+            Log.e(TAG, "Null image found");
         }
-        intent.putExtra("EVENT_NAME", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_NAME));
-        intent.putExtra("EVENT_DESCRIPTION", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_DESCRIPTION));
-        double latitude = parseEvents.get(position).getParseGeoPoint(ParseConstants.KEY_EVENT_LOCATION).getLatitude();
-        double longitude = parseEvents.get(position).getParseGeoPoint(ParseConstants.KEY_EVENT_LOCATION).getLongitude();
-        intent.putExtra("EVENT_LATITUDE", latitude);
-        intent.putExtra("EVENT_LONGITUDE", longitude);
-        intent.putExtra("EVENT_TAG", parseEvents.get(position).getString(ParseConstants.KEY_EVENT_TAG));
-        intent.putExtra("EVENT_ID", parseEvents.get(position).getObjectId());
+
         startActivity(intent);
     }
 
@@ -168,7 +177,7 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
         final android.support.v7.app.AlertDialog dialog = builder.create();
 
 
-        ParseQuery<ParseObject> comp = new ParseQuery<ParseObject>(ParseConstants.CLASS_TAGS);
+        ParseQuery<ParseObject> comp = new ParseQuery<>(ParseConstants.CLASS_TAGS);
         comp.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
@@ -178,7 +187,7 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
                     for (int i = 0; i < list.size(); i++) {
                         tagFilters[i] = list.get(i).get(ParseConstants.KEY_TAG_NAME).toString();
                     }
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, tagFilters);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, tagFilters);
                     AutoCompleteTextView textView = (AutoCompleteTextView) dialog.findViewById(R.id.filter_autocomplete);
                     textView.setAdapter(adapter);
 
@@ -192,9 +201,9 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
     }
 
     public int tagExists(String s) {
-        ParseQuery<ParseObject> q = new ParseQuery<ParseObject>(ParseConstants.CLASS_TAGS);
+        ParseQuery<ParseObject> q = new ParseQuery<>(ParseConstants.CLASS_TAGS);
         q.whereEqualTo(ParseConstants.KEY_TAG_NAME, s);
-        List<ParseObject> list = null;
+        List<ParseObject> list;
         try {
             list = q.find();
         } catch (ParseException e) {
@@ -208,7 +217,7 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
     }
 
     public void refreshEvents() {
-        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(ParseConstants.CLASS_EVENTS);
+        ParseQuery<ParseObject> query = new ParseQuery<>(ParseConstants.CLASS_EVENTS);
         ParseGeoPoint geoPoint = new ParseGeoPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude());
         query.whereWithinMiles(ParseConstants.KEY_EVENT_LOCATION, geoPoint, 5);
         query.whereExists(ParseConstants.KEY_EVENT_NAME);
@@ -245,7 +254,7 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
     }
 
     public void setActiveFilters() {
-        ParseQuery<ParseObject> q = new ParseQuery<ParseObject>(ParseConstants.CLASS_TAGS);
+        ParseQuery<ParseObject> q = new ParseQuery<>(ParseConstants.CLASS_TAGS);
         q.whereContainedIn(ParseConstants.KEY_TAG_ID, filters);
         q.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -295,7 +304,8 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
-        refreshEvents();
+        // We might want to provide an option for users to update events, in case they were driving or something
+        // refreshEvents();
     }
 
     public class FeedAdapter extends ArrayAdapter<ParseObject> {
