@@ -1,5 +1,6 @@
 package acc.aviato;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -265,6 +266,18 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
                     }
                 }
             });
+        } else {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (mLastLocation != null) {
+                refreshEvents();
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage(getString(R.string.error_location_not_found))
+                        .setTitle(getString(R.string.error_title))
+                        .setPositiveButton(android.R.string.ok, null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
         }
     }
 
@@ -305,6 +318,13 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
             refreshEvents();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(getString(R.string.error_location_not_found))
+                    .setTitle(getString(R.string.error_title))
+                    .setPositiveButton(android.R.string.ok, null);
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
     }
 

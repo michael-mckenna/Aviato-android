@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Aviato</string>
+    <string name="app_name">EventMe</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -38,6 +38,7 @@
     <string name="error_description">You must include a description.</string>
     <string name="error_invalid_tags">One or more of your tags is invalid.</string>
     <string name="error_location">You must select a location.</string>
+    <string name="error_location_not_found">Location not found. Check location settings.</string>
     <string name="error_offline">You are offline.</string>
     <string name="error_title_login">Error logging in.</string>
     <string name="error_sign_in_incomplete">Please complete all required fields.</string>
