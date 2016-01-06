@@ -127,10 +127,8 @@ public class EventDetailActivity extends AppCompatActivity {
                         @Override
                         public void done(ParseObject event, ParseException e) {
                             if (e == null) {
-                                System.out.println("Unpined");
                                 event.unpinInBackground("FavoritedEvents");
                             } else if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
-                                System.out.println("Pinned");
                                 mEvent.pinInBackground("FavoritedEvents");
                             } else {
                                 Log.e(TAG, e.getMessage());

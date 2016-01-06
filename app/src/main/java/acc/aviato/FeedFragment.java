@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -81,9 +80,23 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
     public void onResume() {
         super.onResume();
 
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
         if (mLastLocation != null) {
             refreshEvents();
         }
+    }
+
+    @Override
+    public void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
     }
 
     @Override
@@ -217,40 +230,42 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
     }
 
     public void refreshEvents() {
-        ParseQuery<ParseObject> query = new ParseQuery<>(ParseConstants.CLASS_EVENTS);
-        ParseGeoPoint geoPoint = new ParseGeoPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        query.whereWithinMiles(ParseConstants.KEY_EVENT_LOCATION, geoPoint, 5);
-        query.whereExists(ParseConstants.KEY_EVENT_NAME);
-        if (!filters.isEmpty()) {
-            query.whereContainsAll(ParseConstants.KEY_EVENT_TAG_ID, filters);
-        }
-        query.addDescendingOrder(ParseConstants.KEY_EVENT_VOTES);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                if (e == null) {
-                    parseEvents = list;
-                    voteArray = new int[parseEvents.size()];
-                    for (int i = 0; i < parseEvents.size(); i++) {
-                        voteArray[i] = parseEvents.get(i).getInt(ParseConstants.KEY_EVENT_VOTES);
-                    }
-                    if (getListView().getAdapter() == null) {
-                        adapt = new FeedAdapter(
-                                getListView().getContext(),
-                                parseEvents);
-                        setListAdapter(adapt);
-                    } else {
-                        //refill adapter here
-                        adapt = new FeedAdapter(
-                                getListView().getContext(),
-                                parseEvents);
-                        setListAdapter(adapt);
-                    }
-                } else {
-                    e.printStackTrace();
-                }
+        if (mLastLocation != null) {
+            ParseQuery<ParseObject> query = new ParseQuery<>(ParseConstants.CLASS_EVENTS);
+            ParseGeoPoint geoPoint = new ParseGeoPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            query.whereWithinMiles(ParseConstants.KEY_EVENT_LOCATION, geoPoint, 5);
+            query.whereExists(ParseConstants.KEY_EVENT_NAME);
+            if (!filters.isEmpty()) {
+                query.whereContainsAll(ParseConstants.KEY_EVENT_TAG_ID, filters);
             }
-        });
+            query.addDescendingOrder(ParseConstants.KEY_EVENT_VOTES);
+            query.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> list, ParseException e) {
+                    if (e == null) {
+                        parseEvents = list;
+                        voteArray = new int[parseEvents.size()];
+                        for (int i = 0; i < parseEvents.size(); i++) {
+                            voteArray[i] = parseEvents.get(i).getInt(ParseConstants.KEY_EVENT_VOTES);
+                        }
+                        if (getListView().getAdapter() == null) {
+                            adapt = new FeedAdapter(
+                                    getListView().getContext(),
+                                    parseEvents);
+                            setListAdapter(adapt);
+                        } else {
+                            //refill adapter here
+                            adapt = new FeedAdapter(
+                                    getListView().getContext(),
+                                    parseEvents);
+                            setListAdapter(adapt);
+                        }
+                    } else {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     public void setActiveFilters() {
@@ -276,19 +291,21 @@ public class FeedFragment extends ListFragment implements GoogleApiClient.Connec
     }
 
     protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-
-        mGoogleApiClient.connect();
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
     }
 
     @Override
     public void onConnected(Bundle bundle) {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        refreshEvents();
+        if (mLastLocation != null) {
+            refreshEvents();
+        }
     }
 
     @Override
