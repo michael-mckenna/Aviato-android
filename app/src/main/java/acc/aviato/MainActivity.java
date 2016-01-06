@@ -37,22 +37,6 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(0, false);    // Sets the default tab
 
-        mViewPager.addOnPageChangeListener (new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float v, int i1) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                // This makes the refresh less sensitive. If the page is scrolling already, the refresh layout is disabled.
-                mSwipeRefreshLayout.setEnabled(state == ViewPager.SCROLL_STATE_IDLE);
-            }
-        });
-
         mFab = (FloatingActionButton) findViewById(R.id.fab_feed);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_dark, android.R.color.holo_blue_light,
                 android.R.color.holo_green_light, android.R.color.holo_green_light);
-        mSwipeRefreshLayout.setDistanceToTriggerSync(150);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
