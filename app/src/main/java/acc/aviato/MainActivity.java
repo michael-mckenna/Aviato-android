@@ -137,7 +137,9 @@ public class MainActivity extends AppCompatActivity {
 
     protected void animateFab(final int position) {
         // Creating a custom animation will allow more controlled animations
-        if (position == 0) {
+        if (position != 0) {
+            mFab.hide();
+        } else {
             mFab.show();
         }
     }
