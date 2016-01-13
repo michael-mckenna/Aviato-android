@@ -1,7 +1,11 @@
 package acc.aviato;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -22,6 +26,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -52,9 +57,12 @@ public class CreateEventActivity extends AppCompatActivity {
     public static String TAG = CreateEventActivity.class.getSimpleName();
 
     //UI References
-    private DatePickerDialog DatePickerDialog;
+    private DatePickerDialog mDatePickerDialog;
+    private TimePickerDialog mTimePickerDialog;
 
     private SimpleDateFormat dateFormatter;
+
+    int mYear, mMonthOfYear, mDayOfMonth;
 
     Calendar Date = Calendar.getInstance();
 
@@ -138,7 +146,8 @@ public class CreateEventActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog.show();
+                mDatePickerDialog.show();
+                mTimePickerDialog.show();
 
                 mEditText = (EditText) findViewById(R.id.tagsInput);
                 mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -159,12 +168,21 @@ public class CreateEventActivity extends AppCompatActivity {
         });
 
         Calendar newCalendar = Calendar.getInstance();
-        DatePickerDialog = new DatePickerDialog(CreateEventActivity.this, new DatePickerDialog.OnDateSetListener() {
+        mDatePickerDialog = new DatePickerDialog(CreateEventActivity.this, new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                mYear = year;
+                mMonthOfYear = monthOfYear;
+                mDayOfMonth = dayOfMonth;
                 Date.set(year, monthOfYear, dayOfMonth);
                 btn.setText(dateFormatter.format(Date.getTime()));
             }
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+        mTimePickerDialog = new TimePickerDialog(CreateEventActivity.this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                Date.set(mYear, mMonthOfYear, mDayOfMonth, hourOfDay, minute);
+            }
+        }, newCalendar.get(Calendar.HOUR_OF_DAY), newCalendar.get(Calendar.MINUTE), false);
     }
 
     @Override
@@ -196,7 +214,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 descriptionInput = (EditText) findViewById(R.id.descriptionInput);
 
                 String event = eventInput.getText().toString().trim();
-                String date = dateFormatter.format(Date.getTime());
+                Date date = Date.getTime();
                 String tag = tagsInput.getText().toString().trim();
                 String description = descriptionInput.getText().toString().trim();
                 int vote = 0;
@@ -251,7 +269,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     }
                     mEventObject.put(ParseConstants.KEY_EVENT_VOTES, vote);
                     if (date != null) {
-                        mEventObject.put(ParseConstants.KEY_EVENT_DATE, date);
+                        mEventObject.put(ParseConstants.KEY_EVENT_DATE_TIME, date);
                     }
                     mEventObject.put(ParseConstants.KEY_EVENT_DESCRIPTION, description);
                     mEventObject.put(ParseConstants.KEY_EVENT_VOTES, vote);
@@ -273,6 +291,9 @@ public class CreateEventActivity extends AppCompatActivity {
                         public void done(ParseException e) {
                             if (e == null) {
                                 Toast.makeText(CreateEventActivity.this, getString(R.string.success_uploaded), Toast.LENGTH_SHORT).show();
+                                Intent returnIntent = new Intent();
+                                setResult(Activity.RESULT_OK, returnIntent);
+                                finish();
                             } else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(CreateEventActivity.this);
                                 builder.setMessage(e.getMessage() + "")

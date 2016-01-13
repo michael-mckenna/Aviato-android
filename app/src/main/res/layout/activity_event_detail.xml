@@ -6,84 +6,163 @@
     tools:context="acc.aviato.EventDetailActivity">
 
     <ImageView
-        android:id="@+id/event_image"
-        android:layout_width="120dp"
-        android:layout_height="140dp"
-        android:layout_alignParentEnd="true"
+        android:id="@+id/detail_image"
+        android:layout_width="match_parent"
+        android:layout_height="480dp"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
-
-    <TextView
-        android:id="@+id/event_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/event_image"
-        android:layout_centerHorizontal="true"
-        android:text="Event Name"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <Button
-        android:id="@+id/favorite_button"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_alignBottom="@+id/event_name"
-        android:layout_toEndOf="@+id/event_name"
-        android:layout_toRightOf="@+id/event_name"
-        android:src="@android:drawable/btn_star_big_off" />
+        android:layout_alignParentTop="true"
+        android:adjustViewBounds="true"
+        android:background="@color/gray1"
+        android:scaleType="fitCenter" />
 
     <RelativeLayout
-        android:id="@+id/relativeLayout"
+        android:id="@+id/layout_event_details"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_height="fill_parent"
+        android:layout_marginTop="0dp"
+        android:background="@color/white2"
+        android:elevation="20dp">
 
+        <TextView
+            android:id="@+id/detail_event_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:padding="5dp"
+            android:text="Event Name"
+            android:textAlignment="center"
+            android:textColor="@color/black1"
+            android:textSize="26dp" />
+
+        <View
+            android:id="@+id/divider_line"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_below="@id/detail_event_name"
+            android:background="@color/blue3"
+            android:padding="10dp">
+
+        </View>
+
+        <RelativeLayout
+            android:id="@+id/event_date_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/divider_line"
+            android:padding="15dp">
+
+            <ImageView
+                android:id="@+id/event_date_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:background="@mipmap/time_clock" />
+
+            <TextView
+                android:id="@+id/detail_date_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/event_date_icon"
+                android:layout_toRightOf="@id/event_date_icon"
+                android:paddingLeft="5dp"
+                android:text="MM-DD-YYYY"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/event_address_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/event_date_layout"
+            android:paddingBottom="15dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp">
+
+            <ImageView
+                android:id="@+id/event_address_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:background="@mipmap/address_house" />
+
+            <TextView
+                android:id="@+id/detail_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/event_address_icon"
+                android:layout_toRightOf="@id/event_address_icon"
+                android:paddingLeft="5dp"
+                android:text="Address"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <!-- Voting section -->
+        <RelativeLayout
+            android:id="@+id/section_vote"
+            android:layout_width="wrap_content"
+            android:layout_height="75dp"
+            android:layout_alignBottom="@+id/event_address_layout"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/divider_line"
+            android:minHeight="75dp"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
+
+                <ImageView
+                    android:id="@+id/up_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="@mipmap/arrow_up"
+                    android:contentDescription="Vote up" />
+
+
+                <TextView
+                    android:id="@+id/votes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/up_arrow"
+                    android:layout_alignLeft="@+id/up_arrow"
+                    android:layout_alignRight="@+id/up_arrow"
+                    android:layout_alignStart="@+id/up_arrow"
+                    android:layout_below="@id/up_arrow"
+                    android:layout_centerVertical="true"
+                    android:padding="5dp"
+                    android:text="#"
+                    android:textAlignment="center"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/down_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/votes"
+                    android:background="@mipmap/arrow_down" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/event_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/event_address_layout"
+            android:paddingBottom="15dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="Event description."
+            android:textSize="18dp" />
     </RelativeLayout>
-
-    <TextView
-        android:id="@+id/address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="124dp"
-        android:text="555 Placeholer Address, College Station, TX"
-        android:textAlignment="center"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/event_name"
-        android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/event_name"
-        android:layout_marginLeft="63dp"
-        android:layout_marginStart="63dp"
-        android:text="Comments"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="25sp" />
-
-    <ImageView
-        android:id="@+id/commentButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/relativeLayout"
-        android:layout_toEndOf="@+id/textView3"
-        android:layout_toRightOf="@+id/textView3"
-        android:src="@mipmap/arrow_down" />
-
-    <TextView
-        android:id="@+id/event_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/event_name"
-        android:layout_toLeftOf="@+id/textView3"
-        android:layout_toStartOf="@+id/textView3"
-        android:text="New Text"
-        android:textSize="15sp" />
 
 </RelativeLayout>

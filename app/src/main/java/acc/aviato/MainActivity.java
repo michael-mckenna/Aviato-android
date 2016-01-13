@@ -1,10 +1,10 @@
 package acc.aviato;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -24,18 +24,21 @@ public class MainActivity extends AppCompatActivity {
     SwipeRefreshLayout mSwipeRefreshLayout;
     FloatingActionButton mFab;
 
+    FeedFragment mFeedFragment;
+
     int mCurrentTabPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fragmented);
+        setContentView(R.layout.activity_main);
 
         mSectionsPagerAdapter = new SectionsPageAdapter(this, getSupportFragmentManager());
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(0, false);    // Sets the default tab
+        getSupportActionBar();
 
         mViewPager.addOnPageChangeListener (new ViewPager.OnPageChangeListener() {
             @Override
@@ -66,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                     alert.show();
                 } else {
                     Intent intent = new Intent(MainActivity.this, CreateEventActivity.class);
-                    startActivity(intent);
+                    startActivityForResult(intent, 1);
                 }
             }
         });
@@ -92,16 +95,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-        mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_dark, android.R.color.holo_blue_light,
-                android.R.color.holo_green_light, android.R.color.holo_green_light);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.lightBlue3, R.color.blue3, R.color.darkBlue3);
         mSwipeRefreshLayout.setDistanceToTriggerSync(150);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 if (mCurrentTabPosition == 0) {
                     mSwipeRefreshLayout.setRefreshing(true);
-                    FeedFragment feedFragment = (FeedFragment) getSupportFragmentManager().getFragments().get(mCurrentTabPosition);
-                    feedFragment.refreshEvents();
+                    mFeedFragment = (FeedFragment) getSupportFragmentManager().getFragments().get(mCurrentTabPosition);
+                    mFeedFragment.refreshEvents();
                 }
                 mSwipeRefreshLayout.setRefreshing(false);
             }
@@ -133,6 +135,16 @@ public class MainActivity extends AppCompatActivity {
         }*/
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                mFeedFragment = (FeedFragment) getSupportFragmentManager().getFragments().get(mCurrentTabPosition);
+                mFeedFragment.refreshEvents();
+            }
+        }
     }
 
     protected void animateFab(final int position) {

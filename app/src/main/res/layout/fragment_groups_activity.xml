@@ -22,16 +22,4 @@
         android:padding="10dp"
         android:text="No groups" />
 
-    <com.melnykov.fab.FloatingActionButton
-        android:id="@+id/fab_feed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_plus"
-        fab:fab_colorNormal="@color/colorPrimary"
-        fab:fab_colorPressed="@color/colorPrimaryDark"
-        fab:fab_colorRipple="@color/ripple" />
-
 </RelativeLayout>
