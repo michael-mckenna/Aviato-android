@@ -1,7 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="ripple">#5f74e8</color>
+    <color name="lightBlue1">#4794E9</color>
+    <color name="lightBlue2">#187CEC</color>
+    <color name="lightBlue3">#0573ED</color>
+    <color name="lightBlue4">#0351A9</color>
+    <color name="lightBlue5">#033F82</color>
+
+    <color name="blue1">#4C7CEA</color>
+    <color name="blue2">#1E5DED</color>
+    <color name="blue3">#074DEE</color>
+    <color name="blue4">#0437AD</color>
+    <color name="blue5">#042B86</color>
+
+    <color name="darkBlue1">#5163EB</color>
+    <color name="darkBlue2">#253DEE</color>
+    <color name="darkBlue3">#0924EF</color>
+    <color name="darkBlue4">#0519B2</color>
+    <color name="darkBlue5">#051489</color>
+
+    <color name="white1">#FFFFFF</color>
+    <color name="white2">#EEEEEE</color>
+    <color name="gray1">#BBBBBB</color>
+    <color name="gray2">#999999</color>
+    <color name="gray3">#787878</color>
+    <color name="gray4">#666666</color>
+    <color name="gray5">#444444</color>
+    <color name="black1">#111111</color>
+    <color name="black2">#000000</color>
 </resources>

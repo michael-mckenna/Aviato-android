@@ -30,5 +30,6 @@ public final class ParseConstants {
 
     public static final String KEY_EVENT_LOCATION = "eventLocation";
     public static final String KEY_EVENT_DATE = "eventDate";
+    public static final String KEY_EVENT_DATE_TIME = "eventDateTime";
 
 }

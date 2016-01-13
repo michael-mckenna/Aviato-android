@@ -23,7 +23,9 @@
     <string name="filter_title">Filter Events</string>
     <string name="filter">Filter</string>
 
-    <string name="month_date_format">mm-dd-yyyy</string>
+    <string name="time_format">h:mm a</string>
+    <string name="month_date_format">MM-dd-yyyy</string>
+    <string name="date_time_format">MM-dd-yyyy h:mma</string>
 
     <string name="success_uploaded">Event uploaded.</string>
 
